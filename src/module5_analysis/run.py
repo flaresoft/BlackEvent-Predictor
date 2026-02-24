@@ -9,6 +9,7 @@ BlackEvent 직전에 유독 많이 출현하는 성질 조합 패턴을 찾는�
 """
 
 import json
+import math
 import platform
 from collections import defaultdict
 
@@ -20,6 +21,7 @@ import pandas as pd
 import seaborn as sns
 from mlxtend.frequent_patterns import apriori, association_rules
 from scipy.stats import chi2_contingency, fisher_exact, mannwhitneyu
+from statsmodels.stats.multitest import multipletests
 
 from src.utils import load_config, get_path, setup_logging
 
@@ -60,9 +62,21 @@ _setup_korean_font()
 # ──────────────────────────────────────────────
 # 데이터 준비
 # ──────────────────────────────────────────────
-def load_tagged_corpus(processed_path) -> pd.DataFrame:
-    """태깅된 코퍼스를 로드하고 properties를 리스트로 보장한다."""
-    df = pd.read_parquet(processed_path / "corpus_tagged.parquet")
+def load_tagged_corpus(processed_path, date_min=None, date_max=None) -> pd.DataFrame:
+    """태깅된 코퍼스를 로드하고 properties를 리스트로 보장한다.
+    date_min, date_max가 주어지면 해당 범위만 필터링하여 로드 (메모리 절약).
+    """
+    import pyarrow.parquet as pq
+
+    parquet_path = processed_path / "corpus_tagged.parquet"
+
+    if date_min is not None and date_max is not None:
+        filters = [("date", ">=", date_min), ("date", "<=", date_max)]
+        table = pq.read_table(parquet_path, filters=filters)
+        df = table.to_pandas()
+    else:
+        df = pd.read_parquet(parquet_path)
+
     df["properties"] = df["properties"].apply(
         lambda x: json.loads(x) if isinstance(x, str) else (x if isinstance(x, list) else [])
     )
@@ -130,6 +144,71 @@ def precompute_window_profiles(
     return presence_map, frequency_map
 
 
+def precompute_window_profiles_detailed(
+    corpus_df: pd.DataFrame,
+    ref_dates: list[pd.Timestamp],
+    window_days: int,
+) -> dict[int, list[tuple[str, np.datetime64]]]:
+    """
+    최대 윈도우로 1회 호출하여 각 기준일의 윈도우 내 (property, date) 쌍을 수집한다.
+    서브 윈도우 계산 시 날짜 필터만 적용하면 된다.
+
+    Returns:
+        detailed_map: {date_idx: [(property_id, article_date), ...]}
+    """
+    corpus_sorted = corpus_df.sort_values("date").reset_index(drop=True)
+    dates_array = corpus_sorted["date"].values
+    props_array = corpus_sorted["properties"].values
+
+    detailed_map = {}
+
+    for idx, ref_date in enumerate(ref_dates):
+        start = ref_date - pd.Timedelta(days=window_days)
+        end = ref_date - pd.Timedelta(days=1)
+
+        start_np = np.datetime64(start)
+        end_np = np.datetime64(end)
+        i_start = np.searchsorted(dates_array, start_np, side="left")
+        i_end = np.searchsorted(dates_array, end_np, side="right")
+
+        records = []
+        for i in range(i_start, i_end):
+            article_date = dates_array[i]
+            for prop in props_array[i]:
+                records.append((prop, article_date))
+
+        detailed_map[idx] = records
+
+    return detailed_map
+
+
+def _derive_from_detailed(
+    detailed_map: dict[int, list[tuple[str, np.datetime64]]],
+    ref_dates: list[pd.Timestamp],
+    window_days: int,
+) -> tuple[dict[int, set[str]], dict[int, dict[str, int]]]:
+    """detailed_map에서 서브 윈도우의 presence/frequency를 날짜 필터로 산출한다."""
+    presence_map = {}
+    frequency_map = {}
+
+    for idx, ref_date in enumerate(ref_dates):
+        start_np = np.datetime64(ref_date - pd.Timedelta(days=window_days))
+        end_np = np.datetime64(ref_date - pd.Timedelta(days=1))
+
+        present_set = set()
+        freq_dict = defaultdict(int)
+
+        for prop, article_date in detailed_map[idx]:
+            if start_np <= article_date <= end_np:
+                present_set.add(prop)
+                freq_dict[prop] += 1
+
+        presence_map[idx] = present_set
+        frequency_map[idx] = dict(freq_dict)
+
+    return presence_map, frequency_map
+
+
 # ──────────────────────────────────────────────
 # 분석 1: 단일 성질 검정 (존재 + 빈도)
 # ──────────────────────────────────────────────
@@ -139,19 +218,26 @@ def compute_property_frequencies(
     ctrl_dates: list[pd.Timestamp],
     window_days: int,
     all_properties: list[str],
+    be_detailed: dict = None,
+    ctrl_detailed: dict = None,
 ) -> pd.DataFrame:
     """
     BlackEvent 직전 vs 대조군의 성질별 출현을 계산한다.
     기준일 하나당 get_articles_in_window는 1번만 호출.
     존재 기반(presence) + 빈도 기반(frequency) 동시 산출.
+
+    be_detailed / ctrl_detailed가 제공되면, 날짜 필터로 서브 윈도우를 산출한다.
     """
-    # 사전 계산: 기준일별 윈도우 프로파일
-    be_presence, be_frequency = precompute_window_profiles(
-        corpus_df, be_dates, window_days, all_properties
-    )
-    ctrl_presence, ctrl_frequency = precompute_window_profiles(
-        corpus_df, ctrl_dates, window_days, all_properties
-    )
+    if be_detailed is not None and ctrl_detailed is not None:
+        be_presence, be_frequency = _derive_from_detailed(be_detailed, be_dates, window_days)
+        ctrl_presence, ctrl_frequency = _derive_from_detailed(ctrl_detailed, ctrl_dates, window_days)
+    else:
+        be_presence, be_frequency = precompute_window_profiles(
+            corpus_df, be_dates, window_days, all_properties
+        )
+        ctrl_presence, ctrl_frequency = precompute_window_profiles(
+            corpus_df, ctrl_dates, window_days, all_properties
+        )
 
     records = []
 
@@ -236,13 +322,19 @@ def statistical_test(freq_df: pd.DataFrame, significance: float = 0.05) -> pd.Da
             if row["be_rate"] <= row["ctrl_rate"]:
                 p_value = 1.0
 
+        # Cohen's h: 효과 크기 (presence 기반)
+        be_rate = row["be_rate"]
+        ctrl_rate = row["ctrl_rate"]
+        cohens_h = 2 * (math.asin(math.sqrt(be_rate)) - math.asin(math.sqrt(ctrl_rate)))
+
         results.append({
             **base,
             "analysis_type": "presence",
             "test_type": test_type,
             "p_value": p_value,
             "odds_ratio": odds_ratio,
-            "significant": p_value < significance and row["be_rate"] > row["ctrl_rate"],
+            "effect_size": cohens_h,
+            "significant": p_value < significance and be_rate > ctrl_rate,
         })
 
         # ── 빈도 기반 (frequency) ──
@@ -267,6 +359,7 @@ def statistical_test(freq_df: pd.DataFrame, significance: float = 0.05) -> pd.Da
             "test_type": "mann_whitney_u",
             "p_value": u_p,
             "odds_ratio": be_freq_mean / ctrl_freq_mean if ctrl_freq_mean > 0 else float("inf"),
+            "effect_size": np.nan,
             "be_freq_mean": be_freq_mean,
             "ctrl_freq_mean": ctrl_freq_mean,
             "significant": u_p < significance and be_freq_mean > ctrl_freq_mean,
@@ -285,31 +378,63 @@ def find_optimal_windows(
     all_properties: list[str],
     windows: list[int],
     significance: float = 0.05,
+    min_effect_size: float = 0.2,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """각 성질마다 가장 유의미한 윈도우를 찾는다."""
     be_dates = events_df["first_shock_date"].tolist()
     ctrl_dates = control_df["date"].tolist()
 
+    # 최대 윈도우로 1회만 사전 계산, 서브 윈도우는 날짜 필터로 산출
+    max_window = max(windows)
+    logger.info(f"최대 윈도우 {max_window}일로 사전 계산 중...")
+    be_detailed = precompute_window_profiles_detailed(corpus_df, be_dates, max_window)
+    ctrl_detailed = precompute_window_profiles_detailed(corpus_df, ctrl_dates, max_window)
+
     all_results = []
     for window in windows:
         logger.info(f"윈도우 {window}일 분석 중...")
         freq_df = compute_property_frequencies(
-            corpus_df, be_dates, ctrl_dates, window, all_properties
+            corpus_df, be_dates, ctrl_dates, window, all_properties,
+            be_detailed=be_detailed, ctrl_detailed=ctrl_detailed,
         )
         test_df = statistical_test(freq_df, significance)
         all_results.append(test_df)
 
     combined = pd.concat(all_results, ignore_index=True)
 
+    # ── Benjamini-Hochberg FDR 보정 ──
+    combined["p_adjusted"] = np.nan
+    for atype in ("presence", "frequency"):
+        mask = combined["analysis_type"] == atype
+        pvals = combined.loc[mask, "p_value"].values
+        if len(pvals) > 0:
+            _, p_adj, _, _ = multipletests(pvals, method="fdr_bh")
+            combined.loc[mask, "p_adjusted"] = p_adj
+
+    # significant 판정을 보정된 p-value + 효과 크기 기준으로 갱신
+    # presence: p_adjusted < significance AND abs(effect_size) >= min_effect_size
+    # frequency: p_adjusted < significance (effect_size 없음)
+    is_presence = combined["analysis_type"] == "presence"
+    combined["significant"] = False
+    combined.loc[is_presence, "significant"] = (
+        (combined.loc[is_presence, "p_adjusted"] < significance)
+        & (combined.loc[is_presence, "be_rate"] > combined.loc[is_presence, "ctrl_rate"])
+        & (combined.loc[is_presence, "effect_size"].abs() >= min_effect_size)
+    )
+    combined.loc[~is_presence, "significant"] = (
+        (combined.loc[~is_presence, "p_adjusted"] < significance)
+        & (combined.loc[~is_presence, "be_freq_mean"] > combined.loc[~is_presence, "ctrl_freq_mean"])
+    )
+
     # be_freq_counts / ctrl_freq_counts 는 저장용에서 제외 (리스트라 CSV 비호환)
     save_cols = [c for c in combined.columns if c not in ("be_freq_counts", "ctrl_freq_counts")]
     combined_save = combined[save_cols]
 
-    # 각 성질별 최적 윈도우: presence 기준 p-value가 가장 작은 윈도우
+    # 각 성질별 최적 윈도우: presence 기준 p_adjusted가 가장 작은 윈도우
     presence_df = combined[combined["analysis_type"] == "presence"]
     optimal = (
         presence_df
-        .sort_values("p_value")
+        .sort_values("p_adjusted")
         .groupby("property_id")
         .first()
         .reset_index()
@@ -463,10 +588,22 @@ def run():
     outputs_path = get_path(config, "outputs")
     analysis_config = config["analysis"]
 
-    # 데이터 로드
-    corpus_df = load_tagged_corpus(processed_path)
+    # 데이터 로드: 이벤트를 먼저 읽어 날짜 범위를 결정한 뒤 코퍼스를 필터 로드
     events_df, control_df = prepare_event_data(processed_path)
-    logger.info(f"데이터 로드: 코퍼스 {len(corpus_df)}건, BlackEvent {len(events_df)}건, 대조군 {len(control_df)}건")
+
+    max_window = max(analysis_config["windows"])  # 가장 넓은 윈도우 (기본 60일)
+    all_ref_dates = pd.concat([
+        events_df["first_shock_date"],
+        control_df["date"],
+    ])
+    date_min = (all_ref_dates.min() - pd.Timedelta(days=max_window)).strftime("%Y-%m-%d")
+    date_max = all_ref_dates.max().strftime("%Y-%m-%d")
+
+    corpus_df = load_tagged_corpus(processed_path, date_min=date_min, date_max=date_max)
+    logger.info(
+        f"데이터 로드: 코퍼스 {len(corpus_df)}건 (날짜 범위: {date_min} ~ {date_max}), "
+        f"BlackEvent {len(events_df)}건, 대조군 {len(control_df)}건"
+    )
 
     # 성질 사전 로드
     with open(outputs_path / "property_dictionary.json", "r", encoding="utf-8") as f:
@@ -480,6 +617,7 @@ def run():
         all_properties,
         windows=analysis_config["windows"],
         significance=analysis_config["significance_level"],
+        min_effect_size=analysis_config.get("min_effect_size", 0.2),
     )
 
     # combined_df 전체 저장 (#7)
@@ -494,18 +632,26 @@ def run():
     logger.info(f"저장: {outputs_path / 'significant_properties.csv'}")
 
     # ── 분석 3: 성질 조합 패턴 ──
-    if len(significant_df) >= 2:
-        sig_properties = significant_df["property_id"].tolist()
+    # 1차: 엄격 기준 통과 (p_adjusted < significance)
+    strict_properties = significant_df["property_id"].tolist()
 
+    # 2차: 느슨한 기준 (p_adjusted < combo_candidate_threshold) — 조합 분석 후보군
+    loose_threshold = analysis_config.get("combo_candidate_threshold", 0.2)
+    loose_df = optimal_df[optimal_df["p_adjusted"] < loose_threshold]
+    combo_candidate_properties = loose_df["property_id"].tolist()
+
+    logger.info(f"조합 분석 후보: 엄격 기준 {len(strict_properties)}개, 조합 후보군 {len(combo_candidate_properties)}개 (p_adjusted < {loose_threshold})")
+
+    if len(combo_candidate_properties) >= 2:
         # 시그니처 단순화: dates_df + date_col만 전달 (#6)
         be_dates_df = events_df[["first_shock_date"]].copy()
         ctrl_dates_df = control_df[["date"]].copy()
 
         be_matrix = build_transaction_matrix(
-            corpus_df, be_dates_df, "first_shock_date", optimal_df, sig_properties
+            corpus_df, be_dates_df, "first_shock_date", optimal_df, combo_candidate_properties
         )
         ctrl_matrix = build_transaction_matrix(
-            corpus_df, ctrl_dates_df, "date", optimal_df, sig_properties
+            corpus_df, ctrl_dates_df, "date", optimal_df, combo_candidate_properties
         )
 
         apriori_config = analysis_config["apriori"]
@@ -523,7 +669,7 @@ def run():
             logger.info("유의미한 성질 조합 없음")
             pd.DataFrame().to_csv(outputs_path / "significant_combinations.csv", index=False)
     else:
-        logger.info("유의미한 성질이 2개 미만, 조합 분석 건너뜀")
+        logger.info("조합 후보군이 2개 미만, 조합 분석 건너뜀")
         pd.DataFrame().to_csv(outputs_path / "significant_combinations.csv", index=False)
 
     # ── 시각화 ──

@@ -65,6 +65,8 @@ tagging:
 analysis:
   windows: [3, 7, 14, 21, 30, 45, 60]  # 윈도우 탐색 범위 (일)
   significance_level: 0.05     # 통계 검정 유의수준
+  combo_candidate_threshold: 0.2    # 조합 분석 후보군 p_adjusted 기준
+  min_effect_size: 0.2              # Cohen's h 최소 효과 크기
   apriori:
     min_support: 0.1
     min_confidence: 0.5
