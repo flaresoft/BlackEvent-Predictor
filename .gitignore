@@ -1,0 +1,39 @@
+# ── 대용량 데이터 ──
+data/raw/
+data/processed/*.parquet
+data/processed/*.csv
+data/outputs/*.parquet
+data/outputs/module4_checkpoints/
+
+# 루트 대용량 파일 (bigkinds 원본/변환)
+*.parquet
+.bigkinds_converter_state.json
+
+# ── 환경 변수 ──
+.env
+
+# ── Python ──
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# ── IDE ──
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── 체크포인트/임시 ──
+**/checkpoint*/
+**/progress.json

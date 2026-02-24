@@ -1,0 +1,105 @@
+# BlackEvent Predictor — 전역 설정
+
+# 데이터 기간
+data:
+  start_date: "2006-01-01"
+  end_date: null  # null이면 현재 날짜까지
+  kospi_ticker: "^KS11"
+
+# Module 1: BlackEvent 정의
+blackevent:
+  shock_threshold: -0.02       # 전일 대비 -2.0%
+  cluster_gap_days: 5          # 충격일 간격 N일 이내 → 하나의 이벤트
+  cluster_gap_search_range:    # 최적값 탐색 범위
+    min: 3
+    max: 14
+  control_exclusion_days: 90   # BlackEvent 전후 제외 기간
+  control_multiplier: 3        # 대조군 수 = BlackEvent 수 × N
+
+# event_id 네이밍 규칙 (모듈 간 공유)
+event_id_prefix:
+  blackevent: "blackevent"      # BlackEvent 직전 기사의 event_id prefix
+  control: "control"            # 대조군 기사의 event_id prefix
+
+# Module 2: 뉴스 수집
+corpus:
+  news_window_days: 60         # 기준일 직전 N일간 기사 수집
+  sections:                    # 수집 대상 섹션 (수집만, 분석에 미사용)
+    - 정치
+    - 경제
+    - 사회
+  dedup_similarity_threshold: 0.85  # 제목 유사도 기반 중복 제거 임계값
+
+# Module 3: 성질 사전 생성
+dictionary:
+  sample_size: 5000            # 오픈형 태깅 샘플 수 (층화 샘플링)
+  tags_per_article: [3, 5]     # 기사당 태그 수 범위
+  stratified_sampling:
+    periods:                   # 시기별 구간 (균등 배분)
+      - ["2006-01-01", "2009-12-31"]
+      - ["2010-01-01", "2013-12-31"]
+      - ["2014-01-01", "2017-12-31"]
+      - ["2018-01-01", "2021-12-31"]
+      - ["2022-01-01", null]   # null이면 현재까지
+  embedding_models:
+    main: "nlpai-lab/KURE-v1"
+    cross_validation: "BAAI/bge-m3"
+  hdbscan:
+    min_cluster_size: 5
+    min_samples: 3
+  cluster_filter:
+    min_articles: 10           # 최소 기사 수 미만 클러스터 제거
+    max_coverage: 0.8          # 전체 기사 80% 초과 커버 클러스터 제거
+    min_cv_confidence: 0.3     # 교차검증 신뢰도 미달 클러스터 제거
+
+# Module 4: 전체 코퍼스 태깅 (임베딩 유사도 매칭)
+tagging:
+  encode_batch_size: 256       # sentence-transformers model.encode() 배치 크기
+  threshold_min: 0.3           # 캘리브레이션 탐색 시작값
+  threshold_max: 0.8           # 캘리브레이션 탐색 종료값
+  threshold_step: 0.05         # 캘리브레이션 탐색 단위
+  default_threshold: 0.5       # 캘리브레이션 샘플이 없을 때 기본 threshold
+  use_per_property_threshold: true  # true: 성질별 최적 threshold 사용, false: 글로벌 threshold만 사용
+
+# Module 5: 패턴 분석
+analysis:
+  windows: [3, 7, 14, 21, 30, 45, 60]  # 윈도우 탐색 범위 (일)
+  significance_level: 0.05     # 통계 검정 유의수준
+  apriori:
+    min_support: 0.1
+    min_confidence: 0.5
+    min_lift: 1.5
+
+# Module 6: 리스크 스코어
+scoring:
+  threshold_model:             # Model A 임계값
+    level_0: [0, 2]            # Normal
+    level_1: [3, 4]            # Watch
+    level_2: [5, 6]            # Warning
+    level_3_properties: 7      # Alert: 성질 N개 이상
+    level_3_combinations: 2    # Alert: 조합 N개 이상
+  normalization_mode: "empirical"  # "empirical" (BE 관측 최대 기준) 또는 "theoretical" (이론적 최대 기준)
+  default_window: 60           # optimal_window가 없는 성질에 적용할 기본 윈도우 (일)
+
+# Module 7: 검증
+validation:
+  train_end: "2019-12-31"      # 학습 데이터 마감일
+  test_start: "2020-01-01"     # 테스트 데이터 시작일
+
+# LLM 설정
+llm:
+  provider: "anthropic"
+  model: "claude-sonnet-4-20250514"
+  temperature: 0
+  max_tokens: 1024
+  retry_attempts: 3
+  retry_delay: 1.0             # 초
+  rpm_limit: 50                # 건건이 호출 시 분당 요청 수 제한
+  use_batch_api: true          # true: Batch API (50% 할인, 폴링 대기), false: 건건이 호출
+  batch_poll_interval: 30      # Batch API 완료 폴링 간격 (초)
+
+# 경로
+paths:
+  raw_data: "data/raw"
+  processed_data: "data/processed"
+  outputs: "data/outputs"

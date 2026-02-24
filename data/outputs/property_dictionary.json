@@ -1,0 +1,2149 @@
+[
+  {
+    "property_id": "Property_001",
+    "representative_tag": "폐기물의 자원 전환",
+    "cluster_keywords": [
+      "폐기물의 자원 전환",
+      "폐기물의 자원화 전환",
+      "폐기물의 자원화 전환",
+      "폐기물의 자원화 전환",
+      "폐기물의 자원 순환 체계 구축",
+      "폐자원의 고부가가치 전환",
+      "폐기물의 재활용을 통한 자원순환",
+      "폐기물의 자원 순환 체계",
+      "폐기물의 자원 순환 체계",
+      "폐기물 공간의 생태적 전환"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 0.909
+  },
+  {
+    "property_id": "Property_002",
+    "representative_tag": "일상생활에 직접적 영향",
+    "cluster_keywords": [
+      "일상생활에 직접적 영향",
+      "일상생활에 대한 직접적 영향력",
+      "일상 활동에 직접적 영향",
+      "일상 행동에 직접적 영향",
+      "일상생활 직접 영향",
+      "일상 행동 패턴에 대한 직접적 영향",
+      "일상생활에 직접적 영향을 미치는 환경 변화",
+      "일상 생활에 직접 영향을 미치는 환경 변화",
+      "일상생활에 직접적 영향을 미치는 환경 조건",
+      "일상생활에 즉각적 영향을 미치는 상황"
+    ],
+    "cluster_size": 12,
+    "article_count": 12,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_003",
+    "representative_tag": "전문성 기반의 인적 자원 선발",
+    "cluster_keywords": [
+      "전문성 기반의 인적 자원 선발",
+      "직무 전문성 기반 선발",
+      "전문성 기반의 관료 선발 과정",
+      "전문성 기반 선임",
+      "전문성 기반의 관료 선발",
+      "전문성 기반 승진",
+      "전문성 기반 인사 배치",
+      "경험 기반 전문성 축적",
+      "경험 축적을 통한 전문성 구축",
+      "기술 전문성 중심의 선발 체계"
+    ],
+    "cluster_size": 12,
+    "article_count": 12,
+    "cross_validation_confidence": 0.667
+  },
+  {
+    "property_id": "Property_004",
+    "representative_tag": "복수 기업의 동시적 진행",
+    "cluster_keywords": [
+      "복수 기업의 동시적 진행",
+      "복수 기업의 동시적 행동",
+      "복수 기업의 동시 발표",
+      "복수 기업들의 동시다발적 활동",
+      "복수 계열사 동시 진행",
+      "복수 기업의 동시적 변동",
+      "복수 업체의 동시 처리",
+      "복수 기업의 동시적 공시 발표",
+      "복수 기업들의 상반된 움직임",
+      "복수 종목의 동시 진행"
+    ],
+    "cluster_size": 20,
+    "article_count": 20,
+    "cross_validation_confidence": 0.95
+  },
+  {
+    "property_id": "Property_005",
+    "representative_tag": "고객 편의성 중심의 서비스 혁신",
+    "cluster_keywords": [
+      "고객 편의성 중심의 서비스 혁신",
+      "고객 편의성 증대를 위한 서비스 혁신",
+      "기술적 혁신을 통한 편의성 강화",
+      "고객 편의성 중심의 프로세스 혁신",
+      "고객 중심의 서비스 혁신",
+      "소비자 편의성 중심의 제도 혁신",
+      "기술 혁신의 고객 서비스 적용",
+      "기업의 고객 중심적 서비스 혁신",
+      "기술적 편의성 증대",
+      "사용자 편의성 증대"
+    ],
+    "cluster_size": 13,
+    "article_count": 13,
+    "cross_validation_confidence": 0.923
+  },
+  {
+    "property_id": "Property_006",
+    "representative_tag": "산업 생태계의 구조적 전환",
+    "cluster_keywords": [
+      "산업 생태계의 구조적 전환",
+      "구조적 경제 패러다임 전환",
+      "구조적 경기순환의 전환점",
+      "지역 경제 생태계의 구조적 변화",
+      "지역 경제 생태계의 구조적 변화",
+      "구조적 경제 변화 요구",
+      "구조적 시스템 전환 요구",
+      "구조적 전환기 진입",
+      "업계 생태계의 구조적 변화",
+      "구조적 변화의 필요성 강조"
+    ],
+    "cluster_size": 16,
+    "article_count": 16,
+    "cross_validation_confidence": 0.562
+  },
+  {
+    "property_id": "Property_007",
+    "representative_tag": "정보 비대칭성",
+    "cluster_keywords": [
+      "정보 비대칭성",
+      "정보 비대칭성",
+      "정보 비대칭성이 존재하는 시장 상황",
+      "정보 비대칭성으로 인한 소비자 불리",
+      "온라인 거래의 정보 비대칭성",
+      "정보 비대칭성으로 인한 불공정 거래 관계",
+      "소비자 정보 비대칭",
+      "정보 비대칭성 기반 거래",
+      "정보 비대칭성으로 인한 가격 왜곡",
+      "정보 비대칭성에 따른 시장 반응"
+    ],
+    "cluster_size": 15,
+    "article_count": 15,
+    "cross_validation_confidence": 0.667
+  },
+  {
+    "property_id": "Property_008",
+    "representative_tag": "전통 산업의 디지털 전환",
+    "cluster_keywords": [
+      "전통 산업의 디지털 전환",
+      "전통 제조업의 디지털 전환",
+      "전통 산업의 디지털 전환 모색",
+      "전통 제조업의 디지털 전환 가속화",
+      "전통 유통업의 디지털 전환",
+      "전통 기업의 디지털 마케팅 전환",
+      "기술 혁신을 통한 전통 산업의 변화",
+      "전통 업종의 디지털 전환 적응",
+      "전통 산업의 기술적 혁신",
+      "전통적 교육 방식의 디지털 전환"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.9
+  },
+  {
+    "property_id": "Property_009",
+    "representative_tag": "정책 우선순위의 재조정",
+    "cluster_keywords": [
+      "정책 우선순위의 재조정",
+      "정책 우선순위의 재조정",
+      "정책 우선순위의 전환",
+      "정책 우선순위의 가시적 재배치",
+      "정책 우선순위의 선택적 배치",
+      "정책 당국의 선택적 우선순위 설정",
+      "정책 당국의 선택적 우선순위 설정",
+      "정책 우선순위의 선택적 집중",
+      "정책 우선순위의 명확한 구분",
+      "업무 우선순위의 재조정"
+    ],
+    "cluster_size": 12,
+    "article_count": 12,
+    "cross_validation_confidence": 0.917
+  },
+  {
+    "property_id": "Property_010",
+    "representative_tag": "공식적 절차를 통한 권력 이양",
+    "cluster_keywords": [
+      "공식적 절차를 통한 권력 이양",
+      "행정 권력의 공식적 이양 과정",
+      "공식적 절차에 의한 권한 이양",
+      "공식적 절차를 통한 권한 승계",
+      "권력 이양의 제도적 절차",
+      "공식적 절차를 통한 권한 위임 과정",
+      "공식적 권한 이양",
+      "공식적 권력 승계 의례",
+      "권력 승계의 공식적 의례화",
+      "지역 정치권력의 제도적 이양"
+    ],
+    "cluster_size": 13,
+    "article_count": 12,
+    "cross_validation_confidence": 0.923
+  },
+  {
+    "property_id": "Property_011",
+    "representative_tag": "과거 발언의 재조명",
+    "cluster_keywords": [
+      "과거 발언의 재조명",
+      "과거 발언의 재조명",
+      "과거 발언의 현재적 재소환",
+      "기존 입장에 대한 재정립",
+      "기존 입장의 반복적 재확인",
+      "기존 입장의 반복적 재확인",
+      "기존 입장의 재확인과 강화",
+      "과거 발언에 대한 현재적 재평가와 수정",
+      "과거 평가의 현재적 재검토",
+      "기존 외교 입장의 반복적 재확인"
+    ],
+    "cluster_size": 13,
+    "article_count": 13,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_012",
+    "representative_tag": "경쟁 강도의 증가",
+    "cluster_keywords": [
+      "경쟁 강도의 증가",
+      "경쟁 강도의 급격한 증가",
+      "경쟁 강도의 급격한 심화",
+      "기업 간 경쟁 구도 변화",
+      "대기업 간 경쟁 구도 변화",
+      "수치적 경쟁 심화",
+      "지역간 경쟁구도의 변화",
+      "시장 확장에 따른 경쟁 구도 변화",
+      "극도로 높은 경쟁 강도",
+      "수치화된 경쟁 기준"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.5
+  },
+  {
+    "property_id": "Property_013",
+    "representative_tag": "투자 주체별 상반된 행동 패턴",
+    "cluster_keywords": [
+      "투자 주체별 상반된 행동 패턴",
+      "외국인 투자자들의 상반된 행동 패턴",
+      "투자주체별 상반된 매매 패턴",
+      "투자주체별 상반된 매매 패턴",
+      "외국인 투자자의 일관된 매매 행동",
+      "투자 주체 간 상반된 거래 행태",
+      "외국인 투자자의 일관된 투자 행동",
+      "외국인 투자자의 일관된 행동",
+      "투자자 그룹 간 상반된 거래 행태",
+      "외국인 투자 패턴 변화"
+    ],
+    "cluster_size": 15,
+    "article_count": 15,
+    "cross_validation_confidence": 0.867
+  },
+  {
+    "property_id": "Property_014",
+    "representative_tag": "경영진의 미래 비전 선언",
+    "cluster_keywords": [
+      "경영진의 미래 비전 선언",
+      "경영진의 미래 비전 선언",
+      "경영진 주도의 공식적 선언",
+      "기업 최고경영진의 공식 의사표명",
+      "경영진의 공개적 목표 선언",
+      "기업 최고경영진의 공식 발언",
+      "기업의 미래 비전 선언",
+      "최고경영진의 직접적 의지 표명",
+      "경영진의 미래 계획 공시",
+      "기업 경영진의 미래 전략 발표"
+    ],
+    "cluster_size": 13,
+    "article_count": 12,
+    "cross_validation_confidence": 0.538
+  },
+  {
+    "property_id": "Property_015",
+    "representative_tag": "고위급 인사 간 직접 접촉",
+    "cluster_keywords": [
+      "고위급 인사 간 직접 접촉",
+      "최고지도자의 직접 개입",
+      "최고지도자 간 직접 대화",
+      "최고 책임자 간의 직접 소통",
+      "최고경영진 간 직접 대면 접촉",
+      "최고위급 인사들의 직접 대면",
+      "최고권력자의 직접적 현장 개입",
+      "총장의 직접적 개입",
+      "최고경영진의 직접적 현장 소통",
+      "최고경영진의 직접적 현장 개입"
+    ],
+    "cluster_size": 14,
+    "article_count": 14,
+    "cross_validation_confidence": 0.857
+  },
+  {
+    "property_id": "Property_016",
+    "representative_tag": "권력기관 내부의 부패 연루",
+    "cluster_keywords": [
+      "권력기관 내부의 부패 연루",
+      "권력 내부의 부패 연루",
+      "권력기관 내부의 부패 연결고리",
+      "권력기관 내부의 부패",
+      "권력기관 내부의 부패 구조",
+      "권력기관 내부의 부패 은폐",
+      "권력기관 내부의 인사 비리",
+      "권력층 주변 인물들의 연쇄적 연루",
+      "권력기관 간 연루 관계의 확산",
+      "권력층 연루 구조"
+    ],
+    "cluster_size": 15,
+    "article_count": 15,
+    "cross_validation_confidence": 0.533
+  },
+  {
+    "property_id": "Property_017",
+    "representative_tag": "경제적 인센티브를 통한 행동 유도",
+    "cluster_keywords": [
+      "경제적 인센티브를 통한 행동 유도",
+      "경제적 인센티브를 통한 행동 유도",
+      "경제적 인센티브를 통한 행동 유도",
+      "경제적 인센티브를 통한 행동 유도",
+      "경제적 인센티브를 통한 행동 유도",
+      "경제적 인센티브를 통한 행동 변화 유도",
+      "경제적 유인을 통한 행동 변화 유도",
+      "경제적 유인을 활용한 행동 변화 유도",
+      "정책적 인센티브를 통한 유도",
+      "경제적 인센티브를 통한 시민 참여 유도"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 0.909
+  },
+  {
+    "property_id": "Property_018",
+    "representative_tag": "매출 대비 상당한 비중의 수주",
+    "cluster_keywords": [
+      "매출 대비 상당한 비중의 수주",
+      "매출 대비 상당한 비중의 수주",
+      "매출 대비 높은 비중의 수주",
+      "매출 대비 높은 비중의 수주",
+      "매출 대비 상당한 규모의 수주",
+      "기업 매출 대비 상당한 규모의 수주",
+      "매출 비중 상당한 규모",
+      "매출 대비 상당한 규모의 거래",
+      "회사 매출 대비 상당한 비중의 거래",
+      "상당한 규모의 매출 비중 차지"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_019",
+    "representative_tag": "구조적 취약성",
+    "cluster_keywords": [
+      "구조적 취약성",
+      "금융시스템의 구조적 취약성",
+      "금융 시스템의 구조적 취약성",
+      "구조적 지배구조의 취약성",
+      "디지털 보안 체계의 구조적 취약성",
+      "구조적 취약성 노출",
+      "금융시스템의 구조적 취약점 노출",
+      "정보기관의 구조적 취약성",
+      "감시 체계의 구조적 취약점",
+      "성장 동력의 구조적 취약성"
+    ],
+    "cluster_size": 15,
+    "article_count": 15,
+    "cross_validation_confidence": 0.8
+  },
+  {
+    "property_id": "Property_020",
+    "representative_tag": "전국 최초 시도",
+    "cluster_keywords": [
+      "전국 최초 시도",
+      "국내 최초 시도",
+      "전국 최초 시도의 혁신성",
+      "국내 최초 달성",
+      "전국 최초 시도를 통한 혁신성",
+      "업계 최초의 혁신적 시도",
+      "전국 최초의 제도적 시도",
+      "업계 최초의 성과 달성",
+      "업계 최초 달성",
+      "전국 최초 시행의 실험적 성격"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 0.636
+  },
+  {
+    "property_id": "Property_021",
+    "representative_tag": "다자간 협상의 교착상태",
+    "cluster_keywords": [
+      "다자간 협상의 교착상태",
+      "다자간 협상의 교착상태",
+      "다자간 협상의 교착상태",
+      "양자간 협상의 교착상태",
+      "양자간 협상의 교착 상태",
+      "다자간 협상체제의 교착상황",
+      "반복적 협상의 교착상태",
+      "협상 교착상태의 지속화",
+      "장기간 지속되는 협상 교착상태",
+      "양국 간 협상의 교착상태"
+    ],
+    "cluster_size": 17,
+    "article_count": 17,
+    "cross_validation_confidence": 0.647
+  },
+  {
+    "property_id": "Property_022",
+    "representative_tag": "기업의 신제품 출시 발표",
+    "cluster_keywords": [
+      "기업의 신제품 출시 발표",
+      "기업의 신제품 출시 발표",
+      "기업의 신제품 출시 발표",
+      "기업의 신제품 출시 발표",
+      "기업의 신제품 출시 발표",
+      "기업의 신제품 출시 발표",
+      "기업의 신제품 출시 행위",
+      "기업의 신제품 출시 행위",
+      "기업의 신제품 공개 행사",
+      "신제품 출시 발표"
+    ],
+    "cluster_size": 17,
+    "article_count": 17,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_023",
+    "representative_tag": "금융시장 간 상호연동성",
+    "cluster_keywords": [
+      "금융시장 간 상호연동성",
+      "금융시장 간 상호연동성",
+      "시장간 상호연동성",
+      "국제 금융시장 연동성",
+      "글로벌 상품시장의 상호 연동성",
+      "시장 연동성",
+      "금융 시스템의 상호 연동성",
+      "국제 경제 관계의 상호 연동성",
+      "국가 간 금융정책 연동성",
+      "금융시장 간 상호연결성"
+    ],
+    "cluster_size": 15,
+    "article_count": 14,
+    "cross_validation_confidence": 0.867
+  },
+  {
+    "property_id": "Property_024",
+    "representative_tag": "지역적 경제 취약성 노출",
+    "cluster_keywords": [
+      "지역적 경제 취약성 노출",
+      "지역경제의 취약성 노출",
+      "지역 경제의 구조적 취약성 노출",
+      "지역 경제 생태계의 취약성 노출",
+      "지역간 경제 의존관계의 취약성",
+      "국가 경제의 취약성 노출",
+      "국가 경제의 구조적 취약성 노출",
+      "지역 경제 생태계의 취약성",
+      "경제적 취약성 노출",
+      "지역간 경제적 상호의존성"
+    ],
+    "cluster_size": 12,
+    "article_count": 12,
+    "cross_validation_confidence": 0.917
+  },
+  {
+    "property_id": "Property_025",
+    "representative_tag": "정치적 공약 발표",
+    "cluster_keywords": [
+      "정치적 공약 발표",
+      "정치적 공약 발표",
+      "정치적 공약 발표",
+      "정치인의 선거 공약 제시",
+      "정치적 의제 설정과 공약 발표",
+      "지역 정치인의 공약 발표",
+      "지역 정치인의 공약 발표",
+      "선거 공약을 통한 정치적 약속",
+      "선거 공약을 통한 정책 제시",
+      "정치적 의제 설정"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.8
+  },
+  {
+    "property_id": "Property_026",
+    "representative_tag": "정치적 결정의 경제적 파급효과",
+    "cluster_keywords": [
+      "정치적 결정의 경제적 파급효과",
+      "정치적 결정이 경제활동에 미치는 직접적 영향",
+      "정치적 결정이 경제 활동에 미치는 직접적 영향",
+      "정치적 충격의 경제적 파급효과",
+      "정치적 충격에 대한 경제적 대응",
+      "정치적 결정이 경제적 이해관계에 미치는 직접적 영향",
+      "경제적 압박에 대한 정책적 대응",
+      "정치적 갈등의 파급 효과",
+      "경제적 압박 상황에서의 정책적 딜레마",
+      "경제적 부담 완화를 위한 정책적 대응"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.6
+  },
+  {
+    "property_id": "Property_027",
+    "representative_tag": "제도적 절차를 통한 정당성 확보",
+    "cluster_keywords": [
+      "제도적 절차를 통한 정당성 확보",
+      "법적 근거를 통한 정당성 확보",
+      "제도적 해결책 모색을 통한 정당성 확보",
+      "정치적 의지 표명을 통한 정당성 확보 시도",
+      "제도적 의례를 통한 정당성 확보",
+      "정치적 정당성 확보를 위한 명분 제시",
+      "정치적 중립성 강조를 통한 정당성 확보",
+      "제도적 정당성 확보를 위한 절차적 접근",
+      "높은 찬성률을 통한 정당성 확보",
+      "성과 검증을 통한 정당성 확보"
+    ],
+    "cluster_size": 13,
+    "article_count": 13,
+    "cross_validation_confidence": 0.615
+  },
+  {
+    "property_id": "Property_028",
+    "representative_tag": "권력과 자본의 유착",
+    "cluster_keywords": [
+      "권력과 자본의 유착",
+      "권력과 자본의 유착",
+      "권력과 자본의 유착 관계",
+      "권력과 자본의 유착 관계",
+      "권력과 자본의 유착 관계",
+      "권력과 자본의 유착 관계",
+      "권력과 자본의 결탁",
+      "권력과 자본의 은밀한 결합",
+      "권력과 경제적 이익의 결탁",
+      "권력과 경제적 이익의 연결고리"
+    ],
+    "cluster_size": 14,
+    "article_count": 14,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_029",
+    "representative_tag": "대규모 주거 공급 사업",
+    "cluster_keywords": [
+      "대규모 주거 공급 사업",
+      "대규모 주거 공급 사업",
+      "대규모 주거 공급 프로젝트",
+      "대규모 주거 공급 계획",
+      "대규모 주거단지 공급",
+      "대규모 주거공급 계획",
+      "대규모 주거단지 개발 사업",
+      "대규모 집단적 주거 공급",
+      "대규모 개발 사업",
+      "대규모 단지 개발"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 0.727
+  },
+  {
+    "property_id": "Property_030",
+    "representative_tag": "대규모 장기 계약 체결",
+    "cluster_keywords": [
+      "대규모 장기 계약 체결",
+      "대규모 산업 계약 체결",
+      "대규모 산업 계약 체결",
+      "대규모 국제 계약 체결",
+      "대규모 국제 계약 체결",
+      "상당한 규모의 계약 체결",
+      "상당한 규모의 계약 체결",
+      "대규모 장기 공급계약 체결",
+      "대규모 건설 프로젝트의 계약 체결",
+      "대규모 국제 공급 계약"
+    ],
+    "cluster_size": 13,
+    "article_count": 13,
+    "cross_validation_confidence": 0.846
+  },
+  {
+    "property_id": "Property_031",
+    "representative_tag": "시간적 압박감",
+    "cluster_keywords": [
+      "시간적 압박감",
+      "시간적 압박 상황",
+      "시간적 압박과 제약",
+      "정치적 의사결정의 시간적 압박성",
+      "시간적 압박 하의 정치적 판단",
+      "시간적 압박감과 긴박성",
+      "시간적 압박 하의 선택",
+      "정치적 시간 압박 상황",
+      "시간적 압박감과 긴급성",
+      "시간적 압박 하에서의 의사결정"
+    ],
+    "cluster_size": 26,
+    "article_count": 26,
+    "cross_validation_confidence": 0.846
+  },
+  {
+    "property_id": "Property_032",
+    "representative_tag": "규제기관의 사후 대응",
+    "cluster_keywords": [
+      "규제기관의 사후 대응",
+      "규제 당국의 사후적 대응",
+      "규제기관의 사후 제재 조치",
+      "규제 당국의 사후 대응적 개입",
+      "규제기관의 사후적 제재조치",
+      "정부 규제기관의 사후 대응",
+      "규제 당국의 사후 제재 조치",
+      "규제기관의 사후 감시 행위",
+      "규제 기관의 사후적 개입과 시정 조치",
+      "규제당국의 사후 적발 및 처벌"
+    ],
+    "cluster_size": 12,
+    "article_count": 12,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_033",
+    "representative_tag": "기업의 사회적 책임 실천",
+    "cluster_keywords": [
+      "기업의 사회적 책임 실천",
+      "기업의 사회적 책임 실천",
+      "기업의 사회적 책임 실천",
+      "기업의 사회적 책임 실천",
+      "기업의 사회적 책임 실천",
+      "기업의 사회적 책임 실천",
+      "기업의 사회적 책임 실천",
+      "기업의 사회적 책임 실천",
+      "기업의 사회적 책임 실천",
+      "기업의 사회적 책임 실천"
+    ],
+    "cluster_size": 20,
+    "article_count": 20,
+    "cross_validation_confidence": 0.95
+  },
+  {
+    "property_id": "Property_034",
+    "representative_tag": "증권사의 투자의견 발표",
+    "cluster_keywords": [
+      "증권사의 투자의견 발표",
+      "증권사의 투자의견 발표",
+      "증권사의 투자의견 발표",
+      "증권사의 투자의견 발표",
+      "증권사의 투자의견 발표",
+      "증권사의 투자의견 발표",
+      "증권사의 투자 전망 제시",
+      "증권사의 실적 예측 발표",
+      "증권사의 기업 실적 예측 발표",
+      "증권사의 기업 분석 및 투자 의견 제시"
+    ],
+    "cluster_size": 17,
+    "article_count": 17,
+    "cross_validation_confidence": 0.765
+  },
+  {
+    "property_id": "Property_035",
+    "representative_tag": "전문가 분석에 기반한 투자 전망 제시",
+    "cluster_keywords": [
+      "전문가 분석에 기반한 투자 전망 제시",
+      "전문가 분석에 기반한 투자 전망",
+      "전문가 분석을 통한 시장 전망 제시",
+      "전문가 분석을 통한 시장 전망 제시",
+      "전문가 분석을 통한 투자 전망 제시",
+      "전문가 분석에 기반한 미래 전망",
+      "전문가 예측에 기반한 전망",
+      "전문가 예측 기반 전망",
+      "전문가 분석을 통한 시장 해석",
+      "미래 전망에 기반한 예측적 분석"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_036",
+    "representative_tag": "기관 간 경쟁적 구조",
+    "cluster_keywords": [
+      "기관 간 경쟁적 구조",
+      "상대적 경쟁 구조",
+      "국가 간 경쟁 구조",
+      "경쟁 구조 형성",
+      "지역 단위 경쟁 구조",
+      "지역 단위 경쟁 구조",
+      "지역 간 경쟁적 평가 구조",
+      "국제적 경쟁 구조",
+      "교육기관 간 경쟁적 평가 구조",
+      "기업 간 치열한 경쟁 구조"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.3
+  },
+  {
+    "property_id": "Property_037",
+    "representative_tag": "개인 일탈의 사회적 파장",
+    "cluster_keywords": [
+      "개인 일탈의 사회적 파장",
+      "개인적 일탈의 사회적 파장",
+      "개인적 일탈의 사회적 파급",
+      "개인의 일탈이 집단에 미치는 파급효과",
+      "개인의 일탈이 사회적 파장으로 확산",
+      "집단적 상황에서의 개인적 일탈",
+      "개인적 욕망의 사회적 일탈",
+      "집단행동 중 개인의 일탈행위",
+      "개인 행위의 사회적 파급",
+      "공인의 사적 일탈과 사회적 파장"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.9
+  },
+  {
+    "property_id": "Property_038",
+    "representative_tag": "대규모 공적 자금 투입",
+    "cluster_keywords": [
+      "대규모 공적 자금 투입",
+      "정부 주도의 대규모 공공투자",
+      "대규모 재정투입 방식",
+      "정부 주도의 대규모 투자 계획",
+      "막대한 예산 규모의 공공투자",
+      "대규모 재정 투입 계획",
+      "대규모 자본 유입",
+      "대규모 예산 투입을 통한 공공사업",
+      "대규모 자금 조달",
+      "대규모 자본 투자를 통한 시장 진입"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.7
+  },
+  {
+    "property_id": "Property_039",
+    "representative_tag": "시간대별 변화 패턴",
+    "cluster_keywords": [
+      "시간대별 변화 패턴",
+      "시간대별 변화 패턴",
+      "시간대별 변화 패턴",
+      "시간대별 변화 패턴",
+      "시간대별 상이한 패턴",
+      "시간대별 변동성",
+      "시간대별 날씨 변화",
+      "시간대별 온도 변화",
+      "시간적 추세 변화",
+      "시간대별 발생 패턴의 차이"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 0.818
+  },
+  {
+    "property_id": "Property_040",
+    "representative_tag": "지역별 차별화된 기상 패턴",
+    "cluster_keywords": [
+      "지역별 차별화된 기상 패턴",
+      "지역별 차별화된 기상 패턴",
+      "지역별 차등적 날씨 패턴",
+      "지역별 차등적 기상 패턴",
+      "지역별 차별화된 날씨 패턴",
+      "지역별 기온 차이",
+      "지역적 온도 편차",
+      "지역별 온도 편차와 분포",
+      "지역별 온도 편차 발생",
+      "지역별 시간차를 둔 기상 변화"
+    ],
+    "cluster_size": 13,
+    "article_count": 13,
+    "cross_validation_confidence": 0.462
+  },
+  {
+    "property_id": "Property_041",
+    "representative_tag": "법적 수단을 통한 갈등 해결",
+    "cluster_keywords": [
+      "법적 수단을 통한 갈등 해결",
+      "법적 수단을 통한 갈등 해결 시도",
+      "법적 분쟁을 통한 타협적 해결",
+      "법적 대응을 통한 갈등 해결 추구",
+      "법원의 사법적 개입을 통한 분쟁 해결",
+      "법적 구제를 통한 해결",
+      "법적 절차를 통한 사후 해결",
+      "법적 처벌을 통한 사후적 해결",
+      "행정적 개입을 통한 분쟁 해결 모색",
+      "사법부를 통한 갈등 해결"
+    ],
+    "cluster_size": 15,
+    "article_count": 15,
+    "cross_validation_confidence": 0.533
+  },
+  {
+    "property_id": "Property_042",
+    "representative_tag": "예상치를 크게 상회하는 실적 발표",
+    "cluster_keywords": [
+      "예상치를 크게 상회하는 실적 발표",
+      "기대치 초과 달성",
+      "예상치 하회하는 실적 발표",
+      "실적 예측치 초과 달성 전망",
+      "시장 예상치 초과 달성",
+      "예상치를 크게 하회하는 실적",
+      "예상치 대비 소폭 하회하는 성과",
+      "예상을 뛰어넘는 실적 창출",
+      "기대치를 뛰어넘는 예상 밖의 결과",
+      "시장 예상을 뛰어넘는 긍정적 성과 달성"
+    ],
+    "cluster_size": 12,
+    "article_count": 12,
+    "cross_validation_confidence": 0.417
+  },
+  {
+    "property_id": "Property_043",
+    "representative_tag": "실무 중심의 체험형 학습",
+    "cluster_keywords": [
+      "실무 중심의 체험형 학습",
+      "체험 중심의 실무 학습",
+      "현장 중심의 실무 교육",
+      "현장 중심의 교육 프로그램",
+      "체험 중심의 학습 방식",
+      "현장 중심의 교육 접근",
+      "체험 중심의 학습방식",
+      "현장 체험형 교육 방식",
+      "실무 중심의 교육 과정 설계",
+      "찾아가는 현장 중심의 교육 방식"
+    ],
+    "cluster_size": 24,
+    "article_count": 24,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_044",
+    "representative_tag": "공공기관 주도의 교육 프로그램",
+    "cluster_keywords": [
+      "공공기관 주도의 교육 프로그램",
+      "공공기관 주도의 교육 프로그램",
+      "공공기관 주도의 교육 프로그램",
+      "공공기관 주도의 교육 프로그램",
+      "공공기관 주도의 교육 서비스 제공",
+      "공공기관 주도의 교육 서비스 제공",
+      "교육기관 주도의 프로그램 운영",
+      "교육기관 주도의 프로그램 운영",
+      "공공기관 주도의 서비스 제공",
+      "공공기관 주도의 서비스 제공"
+    ],
+    "cluster_size": 22,
+    "article_count": 22,
+    "cross_validation_confidence": 0.909
+  },
+  {
+    "property_id": "Property_045",
+    "representative_tag": "공개적 입장 표명을 통한 압박",
+    "cluster_keywords": [
+      "공개적 입장 표명을 통한 압박",
+      "공개적 발언을 통한 정치적 압박",
+      "공개적 압박을 통한 입장 전달",
+      "언론을 통한 공개적 압박",
+      "공개적 비난을 통한 압박",
+      "정치적 입장 표명을 통한 압박",
+      "공개적 압박을 통한 정책 추진",
+      "공개적 압박을 통한 사회적 제재",
+      "공개적 압력 행사 방식",
+      "공개적 불만 표출을 통한 압박 방식"
+    ],
+    "cluster_size": 13,
+    "article_count": 13,
+    "cross_validation_confidence": 0.846
+  },
+  {
+    "property_id": "Property_046",
+    "representative_tag": "공간적 광역 확산",
+    "cluster_keywords": [
+      "공간적 광역 확산",
+      "공간적 광역 확산",
+      "공간적 광역 확산",
+      "공간적 광역 분포",
+      "공간적 광역 분포",
+      "광역적 확산성",
+      "광역적 확산성",
+      "공간적 확산성",
+      "광범위한 공간적 분포",
+      "공간적 전국 단위의 광역성"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.9
+  },
+  {
+    "property_id": "Property_047",
+    "representative_tag": "상징적 행위를 통한 정치적 의사표현",
+    "cluster_keywords": [
+      "상징적 행위를 통한 정치적 의사표현",
+      "상징적 행보를 통한 정치적 의도 표출",
+      "상징적 행동을 통한 의사표현",
+      "집단행동을 통한 정치적 의사표현",
+      "상징적 정치 행위를 통한 통합 메시지",
+      "상징성을 통한 정치적 메시지 전달",
+      "집단행동을 통한 정치적 요구 표출",
+      "상징적 퍼포먼스를 통한 정치적 메시지 전달",
+      "상징적 행동을 통한 메시지 전달",
+      "집단행동을 통한 정치적 압력 행사"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 0.636
+  },
+  {
+    "property_id": "Property_048",
+    "representative_tag": "개인의 업무 성과에 대한 공식적 인정",
+    "cluster_keywords": [
+      "개인의 업무 성과에 대한 공식적 인정",
+      "공식적 의례를 통한 성과 인정",
+      "공적 성과에 대한 제도적 인정",
+      "개인의 공적 성과에 대한 제도적 인정",
+      "개인의 장기간 성과에 대한 공식적 인정",
+      "공적 성과에 대한 인정과 포상",
+      "기업 성과에 대한 공식적 인정",
+      "공식적 의례를 통한 사회적 인정",
+      "공공기관의 성과 인정",
+      "공식적 인정과 축하의 의례"
+    ],
+    "cluster_size": 12,
+    "article_count": 12,
+    "cross_validation_confidence": 0.917
+  },
+  {
+    "property_id": "Property_049",
+    "representative_tag": "시장 양극화 심화",
+    "cluster_keywords": [
+      "시장 양극화 심화",
+      "경제적 양극화 심화",
+      "정치적 양극화의 심화",
+      "시장 불안정성과 양극화 현상",
+      "정치적 양극화 심화",
+      "여론의 양극화 심화",
+      "시장 내 양극화 현상",
+      "경제적 불평등의 심화 양상",
+      "시장 심리 불안정성",
+      "시장 지표의 불안정성"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.6
+  },
+  {
+    "property_id": "Property_050",
+    "representative_tag": "절차적 정당성을 둘러싼 갈등",
+    "cluster_keywords": [
+      "절차적 정당성을 둘러싼 갈등",
+      "절차적 정당성을 둘러싼 대립",
+      "절차적 정당성을 둘러싼 다툼",
+      "절차적 정당성 논란",
+      "절차적 정당성을 둘러싼 내부 대립",
+      "절차적 정당성에 대한 상반된 주장",
+      "절차적 정당성에 대한 의혹",
+      "절차적 정당성과 실질적 합리성의 괴리",
+      "투명성과 정당성을 둘러싼 갈등",
+      "정책 정당성을 둘러싼 갈등"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 0.636
+  },
+  {
+    "property_id": "Property_051",
+    "representative_tag": "매출 감소 속 수익성 개선",
+    "cluster_keywords": [
+      "매출 감소 속 수익성 개선",
+      "매출 감소 속 수익성 개선",
+      "매출 감소 속 수익성 개선",
+      "매출 감소와 수익성 개선의 동시 발생",
+      "매출 감소와 수익성 개선의 대조적 결과",
+      "매출 대비 수익성 악화",
+      "수익성 개선 추세",
+      "매출 감소폭보다 큰 수익성 악화",
+      "매출과 영업이익의 동반 감소",
+      "수익성의 급격한 악화"
+    ],
+    "cluster_size": 14,
+    "article_count": 14,
+    "cross_validation_confidence": 0.5
+  },
+  {
+    "property_id": "Property_052",
+    "representative_tag": "정량적 목표 수치 제시",
+    "cluster_keywords": [
+      "정량적 목표 수치 제시",
+      "정량적 목표가 제시",
+      "정량적 목표치 제시를 통한 구체화",
+      "정량적 목표 설정",
+      "정량적 목표가격 제시",
+      "수치화된 구체적 목표 설정",
+      "수치화된 구체적 목표 설정",
+      "목표 수치를 통한 구체적 제시",
+      "수치화된 목표 설정",
+      "정량적 데이터 제시"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 0.909
+  },
+  {
+    "property_id": "Property_053",
+    "representative_tag": "정책 결정 과정의 불투명성",
+    "cluster_keywords": [
+      "정책 결정 과정의 불투명성",
+      "정책 실행 과정의 불확실성",
+      "정책 실행 과정의 불확실성",
+      "의사결정 과정의 불투명성",
+      "정책 시행의 불확실성",
+      "정책 검토 단계의 불확실성",
+      "정책 실행의 지연과 불확실성",
+      "정책 효과의 불확실성",
+      "당내 의사결정 과정의 불투명성",
+      "의사결정 과정의 불안정성"
+    ],
+    "cluster_size": 12,
+    "article_count": 12,
+    "cross_validation_confidence": 0.75
+  },
+  {
+    "property_id": "Property_054",
+    "representative_tag": "차별화를 통한 시장 진입",
+    "cluster_keywords": [
+      "차별화를 통한 시장 진입",
+      "기술적 차별화를 통한 시장 진입",
+      "틈새시장 진출을 통한 차별화 전략",
+      "브랜드 차별화를 통한 시장 경쟁",
+      "가격 경쟁력을 통한 시장 진입",
+      "기술 융합을 통한 시장 진입",
+      "기술 융합을 통한 시장 진출",
+      "차별화를 통한 경쟁 우위 추구",
+      "기술적 차별화를 통한 경쟁우위 확보",
+      "기업 간 전략적 제휴를 통한 시장 진출"
+    ],
+    "cluster_size": 14,
+    "article_count": 14,
+    "cross_validation_confidence": 0.857
+  },
+  {
+    "property_id": "Property_055",
+    "representative_tag": "수요와 공급의 불균형",
+    "cluster_keywords": [
+      "수요와 공급의 불균형",
+      "수요와 공급의 불균형",
+      "수요와 공급의 불균형",
+      "수요와 공급의 불균형",
+      "수요와 공급의 불균형",
+      "공급과 수요의 불균형",
+      "공급과 수요의 불균형",
+      "공급과 수요의 극심한 불균형",
+      "수요와 공급 간의 현저한 불균형",
+      "수요와 공급의 불일치"
+    ],
+    "cluster_size": 27,
+    "article_count": 27,
+    "cross_validation_confidence": 0.963
+  },
+  {
+    "property_id": "Property_056",
+    "representative_tag": "업계 전반의 동반 변화",
+    "cluster_keywords": [
+      "업계 전반의 동반 변화",
+      "업계 전반의 동반 변화",
+      "업계 전반의 동반 상승세",
+      "업계 전반의 동조적 움직임",
+      "업계 전반의 동반 성장",
+      "업계 전반의 동시적 변화",
+      "업종 전반의 동반 상승",
+      "업계 전반의 동시다발적 변화",
+      "업계 전반의 동시다발적 변화",
+      "업계 전반의 동시적 규범 변화"
+    ],
+    "cluster_size": 18,
+    "article_count": 18,
+    "cross_validation_confidence": 0.944
+  },
+  {
+    "property_id": "Property_057",
+    "representative_tag": "시장 전반의 동조화 현상",
+    "cluster_keywords": [
+      "시장 전반의 동조화 현상",
+      "시장 전반의 동조화 현상",
+      "시장 전반의 동조화 현상",
+      "시장 전반의 동조성",
+      "시장 전체의 동조성",
+      "시장 심리의 동조화 현상",
+      "시장 심리의 동조화",
+      "시장 전체의 동조적 반응",
+      "개별 종목들의 동조화 현상",
+      "섹터 전체 동조화 현상"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.9
+  },
+  {
+    "property_id": "Property_058",
+    "representative_tag": "언론을 매개로 한 여론 형성",
+    "cluster_keywords": [
+      "언론을 매개로 한 여론 형성",
+      "언론을 통한 여론전 양상",
+      "언론을 통한 여론전 양상",
+      "미디어를 통한 공론화 과정",
+      "미디어를 통한 공론화 과정",
+      "미디어를 통한 사건의 공론화",
+      "미디어를 통한 담론 형성",
+      "미디어를 활용한 여론전 양상",
+      "미디어를 통한 여론 형성 경쟁",
+      "언론을 통한 사건 공론화"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.8
+  },
+  {
+    "property_id": "Property_059",
+    "representative_tag": "공적 지위를 이용한 사적 이익 추구",
+    "cluster_keywords": [
+      "공적 지위를 이용한 사적 이익 추구",
+      "공권력의 사적 남용",
+      "공적 지위의 사적 남용",
+      "공적 지위의 사적 이용",
+      "공적 권한의 사적 이익을 위한 남용",
+      "공적 지위를 이용한 사익 추구",
+      "공직자의 사적 이익 추구",
+      "공직자의 사적 이익 추구",
+      "권력을 이용한 사적 이익 추구",
+      "정치권력의 사적 이용"
+    ],
+    "cluster_size": 16,
+    "article_count": 16,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_060",
+    "representative_tag": "정책 변경을 통한 규제 완화",
+    "cluster_keywords": [
+      "정책 변경을 통한 규제 완화",
+      "정책적 규제 완화",
+      "정책 규제의 완화",
+      "규제 완화를 통한 정책 전환",
+      "규제 완화를 통한 정책 전환",
+      "규제 완화를 통한 정책 수정",
+      "규제 기준의 완화",
+      "정책적 규제 강화",
+      "정책적 규제 강화",
+      "규제 완화를 통한 시장 개방"
+    ],
+    "cluster_size": 12,
+    "article_count": 12,
+    "cross_validation_confidence": 0.75
+  },
+  {
+    "property_id": "Property_061",
+    "representative_tag": "공공기관의 책임 회피 구조",
+    "cluster_keywords": [
+      "공공기관의 책임 회피 구조",
+      "공공기관의 책임 회피",
+      "공적 책임 회피",
+      "기관 책임 회피 구조",
+      "권력기관 간 책임 회피",
+      "국가기관 내부의 책임 회피 구조",
+      "행정기관 간 책임 회피",
+      "집단적 책임 회피",
+      "정치적 책임 회피 구조",
+      "공공기관의 책임회피성 행태"
+    ],
+    "cluster_size": 13,
+    "article_count": 13,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_062",
+    "representative_tag": "전국적 확산 현상",
+    "cluster_keywords": [
+      "전국적 확산 현상",
+      "전국 단위의 동시적 현상 확산",
+      "전국적 동시 발생",
+      "전국적 동시 발생",
+      "전국적 동시 발생",
+      "전국적 파급력을 가진 현상",
+      "전국적 범위의 현상",
+      "전국적 동시 발생성",
+      "전국적 규모의 광역적 현상",
+      "전국적 확산성을 보이는 사회현상"
+    ],
+    "cluster_size": 20,
+    "article_count": 20,
+    "cross_validation_confidence": 0.65
+  },
+  {
+    "property_id": "Property_063",
+    "representative_tag": "대규모 집단 참여",
+    "cluster_keywords": [
+      "대규모 집단 참여",
+      "대규모 집단 참여",
+      "대규모 집단 참여",
+      "대규모 집단 참여",
+      "대규모 집단의 동시적 참여",
+      "대규모 집단 참여 행사",
+      "대규모 집단 참여 현상",
+      "조직화된 대규모 참여",
+      "대규모 참여 규모",
+      "집단적 동시 진행"
+    ],
+    "cluster_size": 13,
+    "article_count": 12,
+    "cross_validation_confidence": 0.769
+  },
+  {
+    "property_id": "Property_064",
+    "representative_tag": "시간 제한적 프로모션",
+    "cluster_keywords": [
+      "시간 제한적 프로모션",
+      "시간 제한적 프로모션",
+      "기간 한정적 마케팅 활동",
+      "한정 기간 프로모션 마케팅",
+      "시간 한정적 마케팅 활동",
+      "특정 기간 한정 마케팅 활동",
+      "시간 제한적 프로모션 운영",
+      "한정된 기간의 프로모션",
+      "시간 제한적 마케팅 활동",
+      "시간 제한적 마케팅 활동"
+    ],
+    "cluster_size": 38,
+    "article_count": 37,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_065",
+    "representative_tag": "취약계층 대상 맞춤형 지원",
+    "cluster_keywords": [
+      "취약계층 대상 맞춤형 지원",
+      "취약계층 대상 맞춤형 지원",
+      "취약계층 대상 맞춤형 지원",
+      "취약계층 대상의 맞춤형 지원",
+      "취약계층 대상 맞춤형 서비스",
+      "취약계층 대상 맞춤형 서비스",
+      "취약계층 대상 맞춤형 서비스 제공",
+      "취약계층 맞춤형 서비스",
+      "취약계층 대상 맞춤형 프로그램",
+      "취약계층 대상 맞춤형 접근"
+    ],
+    "cluster_size": 16,
+    "article_count": 16,
+    "cross_validation_confidence": 0.938
+  },
+  {
+    "property_id": "Property_066",
+    "representative_tag": "취약계층 대상 선별적 지원",
+    "cluster_keywords": [
+      "취약계층 대상 선별적 지원",
+      "취약계층 대상 선별적 지원",
+      "취약계층 대상 선별적 지원",
+      "취약계층 대상 선별적 지원",
+      "취약계층 대상 선별적 지원",
+      "취약계층 대상 선별적 지원",
+      "취약계층 대상 선별적 지원",
+      "취약계층을 대상으로 한 선별적 지원",
+      "취약계층 대상의 선별적 지원",
+      "취약계층 중심의 선별적 지원"
+    ],
+    "cluster_size": 14,
+    "article_count": 14,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_067",
+    "representative_tag": "특정 계층 대상의 맞춤형 지원",
+    "cluster_keywords": [
+      "특정 계층 대상의 맞춤형 지원",
+      "특정 계층 대상의 맞춤형 지원",
+      "특정 집단 대상의 맞춤형 지원",
+      "특정 대상층 맞춤형 지원",
+      "특정 집단 대상 맞춤형 서비스",
+      "특정 집단 대상의 맞춤형 서비스",
+      "특정 집단 대상의 맞춤형 서비스 제공",
+      "특정 고객층 대상의 맞춤형 서비스",
+      "특정 계층 대상의 선별적 지원",
+      "특정 집단 대상의 맞춤형 교육 서비스"
+    ],
+    "cluster_size": 12,
+    "article_count": 12,
+    "cross_validation_confidence": 0.917
+  },
+  {
+    "property_id": "Property_068",
+    "representative_tag": "시장 심리의 급격한 변화",
+    "cluster_keywords": [
+      "시장 심리의 급격한 변화",
+      "시장 심리의 급격한 변화",
+      "시장 심리의 급속한 전환",
+      "시장 심리의 변화 조짐",
+      "시장 심리의 점진적 변화",
+      "시장 심리의 전환점",
+      "시장 심리의 급속한 반전",
+      "시장 심리 전환의 가시적 표출",
+      "시장 기대심리의 변화",
+      "시장 심리 변화에 따른 변동성"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.6
+  },
+  {
+    "property_id": "Property_069",
+    "representative_tag": "개인적 고통의 공적 영역 노출",
+    "cluster_keywords": [
+      "개인적 고통의 공적 영역 노출",
+      "개인적 고통의 사회적 노출",
+      "개인적 고통의 사회적 발현",
+      "사적 영역의 공적 노출",
+      "사적 공간의 공적 노출",
+      "개인적 고통의 극단적 표출",
+      "개인적 고통의 사회적 은폐",
+      "사적 대화의 공적 영역 노출",
+      "개인적 불만의 극단적 표출",
+      "개인적 불만의 극단적 표출"
+    ],
+    "cluster_size": 15,
+    "article_count": 15,
+    "cross_validation_confidence": 0.6
+  },
+  {
+    "property_id": "Property_070",
+    "representative_tag": "외부 요인에 의한 시장 반응",
+    "cluster_keywords": [
+      "외부 요인에 의한 시장 반응",
+      "외부 요인에 의한 시장 영향",
+      "외부 요인에 의한 시장 변동",
+      "외부 환경 변화에 따른 시장 반응",
+      "외부 요인에 의한 시장 변동성",
+      "외부 시장 변화에 따른 반응",
+      "외부 시장 변동에 따른 연쇄 반응",
+      "외부 시장 환경 변화에 따른 연쇄적 영향",
+      "외부 요인에 의한 영향",
+      "외부 요인에 의한 영향"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_071",
+    "representative_tag": "계절적 전환 현상",
+    "cluster_keywords": [
+      "계절적 전환 현상",
+      "계절적 전환 현상",
+      "계절적 전환기의 기상 현상",
+      "계절적 전환 과정",
+      "계절적 전환의 점진적 진행",
+      "계절적 전환점에서의 기상 변화",
+      "계절적 전환점",
+      "점진적 기상 전환",
+      "점진적 기상 전환",
+      "기상 조건의 점진적 전환"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 0.909
+  },
+  {
+    "property_id": "Property_072",
+    "representative_tag": "복합적 요인들의 상호작용",
+    "cluster_keywords": [
+      "복합적 요인들의 상호작용",
+      "복합적 요인들의 상호작용",
+      "복합적 요인들의 상호작용",
+      "복합적 요인들의 상호작용",
+      "복합적 요인 작용",
+      "복합적 요인 작용",
+      "다양한 요인들의 복합적 작용",
+      "다층적 요인들의 복합적 작용",
+      "복합적 요인의 동시 작용",
+      "복합적 요인들의 상충작용"
+    ],
+    "cluster_size": 14,
+    "article_count": 14,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_073",
+    "representative_tag": "연쇄적 파급효과",
+    "cluster_keywords": [
+      "연쇄적 파급효과",
+      "연쇄적 파급효과",
+      "연쇄적 파급효과",
+      "연쇄적 파급효과",
+      "연쇄적 파급효과",
+      "연쇄적 파급효과",
+      "연쇄적 파급효과",
+      "연쇄적 파급효과",
+      "연쇄적 파급효과",
+      "연쇄적 파급효과"
+    ],
+    "cluster_size": 27,
+    "article_count": 27,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_074",
+    "representative_tag": "공식적 협약을 통한 제도적 파트너십 형성",
+    "cluster_keywords": [
+      "공식적 협약을 통한 제도적 파트너십 형성",
+      "공식적 파트너십 체결을 통한 제도화된 협력",
+      "공식적 협약을 통한 제도화된 파트너십 구축",
+      "공식적 파트너십 제도화",
+      "제도적 파트너십 공식화",
+      "공식적 협약을 통한 파트너십 구축",
+      "공식 제도화를 통한 지속가능한 협력 체계 구축",
+      "기관 간 공식적 파트너십 형성",
+      "공식적 협약을 통한 제도적 접근",
+      "양국 간 공식적 파트너십 구축"
+    ],
+    "cluster_size": 16,
+    "article_count": 16,
+    "cross_validation_confidence": 0.625
+  },
+  {
+    "property_id": "Property_075",
+    "representative_tag": "정책 의지의 공개적 표명",
+    "cluster_keywords": [
+      "정책 의지의 공개적 표명",
+      "정책적 의지의 공개적 표명",
+      "공식적 발표를 통한 정책 의지 표명",
+      "정치적 의지의 공개적 선언",
+      "정치적 의지의 공식적 표명",
+      "정책 방향성의 공개적 선언",
+      "정책 발표의 공식적 선언",
+      "경제정책 의지의 공개적 표명",
+      "정부 차원의 공식적 정책 선언",
+      "공개적 선언을 통한 의지 표명"
+    ],
+    "cluster_size": 12,
+    "article_count": 12,
+    "cross_validation_confidence": 0.917
+  },
+  {
+    "property_id": "Property_076",
+    "representative_tag": "공식 공시를 통한 투명한 정보 공개",
+    "cluster_keywords": [
+      "공식 공시를 통한 투명한 정보 공개",
+      "공시를 통한 투명한 정보 공개",
+      "공시를 통한 투명한 정보 공개",
+      "공시를 통한 투명한 정보 공개",
+      "공시를 통한 투명한 정보 공개",
+      "공시를 통한 투명한 정보 공개",
+      "공시를 통한 투명한 정보 공개",
+      "공시를 통한 투명한 절차 공개",
+      "공시를 통한 투명성 확보",
+      "공시를 통한 투명한 정보공개"
+    ],
+    "cluster_size": 62,
+    "article_count": 61,
+    "cross_validation_confidence": 0.645
+  },
+  {
+    "property_id": "Property_077",
+    "representative_tag": "기업 간 전략적 제휴",
+    "cluster_keywords": [
+      "기업 간 전략적 제휴",
+      "기업 간 전략적 제휴",
+      "기업 간 전략적 제휴",
+      "기업 간 전략적 제휴",
+      "기업 간 전략적 제휴",
+      "기업 간 전략적 제휴",
+      "기업 간 전략적 제휴",
+      "기업 간 전략적 제휴",
+      "기업 간 전략적 제휴",
+      "기업 간 전략적 제휴"
+    ],
+    "cluster_size": 15,
+    "article_count": 15,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_078",
+    "representative_tag": "구조적 불안정성의 확산",
+    "cluster_keywords": [
+      "구조적 불안정성의 확산",
+      "구조적 불균형 심화",
+      "구조적 불균형의 심화",
+      "구조적 불균형의 심화",
+      "장기화되는 구조적 불안정성",
+      "구조적 불균형의 지속적 확대",
+      "구조적 불평등 심화",
+      "구조적 불균형 확산",
+      "구조적 불안정성의 지속",
+      "구조적 통화 불균형 심화"
+    ],
+    "cluster_size": 14,
+    "article_count": 14,
+    "cross_validation_confidence": 0.571
+  },
+  {
+    "property_id": "Property_079",
+    "representative_tag": "외부 환경 변화에 대한 적응적 대응",
+    "cluster_keywords": [
+      "외부 환경 변화에 대한 적응적 대응",
+      "외부 환경 변화에 대한 반응적 대응",
+      "환경 변화에 대한 적응적 대응",
+      "미래 변화에 대한 적응적 대응",
+      "외부 상황에 대한 적응적 대응",
+      "외부 경제환경 변화에 대한 적응적 반응",
+      "기술 환경 변화에 대한 적응적 대응",
+      "외부 환경 변화에 대한 적응적 혁신",
+      "위기 상황에 대한 적응적 대응",
+      "미래 대응을 위한 선제적 변화"
+    ],
+    "cluster_size": 14,
+    "article_count": 14,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_080",
+    "representative_tag": "정량적 성과 측정",
+    "cluster_keywords": [
+      "정량적 성과 측정",
+      "정량적 성과 측정",
+      "정량적 성과 측정",
+      "정량적 성과 측정",
+      "정량적 성과 측정",
+      "정량적 성과 측정",
+      "정량적 평가를 통한 성과 측정",
+      "정량적 성과 지표",
+      "정량적 성과 측정 가능",
+      "생산량 기준 정량적 성과 측정"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 0.909
+  },
+  {
+    "property_id": "Property_081",
+    "representative_tag": "개인 이익과 공적 역할의 충돌",
+    "cluster_keywords": [
+      "개인 이익과 공적 역할의 충돌",
+      "개인적 이해관계와 공적 책임의 충돌",
+      "공적 책임과 사적 이익 간의 충돌",
+      "개인적 성향과 공적 역할의 충돌",
+      "공적 지위와 사적 행위의 충돌",
+      "공적 책임과 개인 신념의 충돌",
+      "공공의 이익과 사적 이익의 충돌",
+      "공적 발언과 사적 이익의 충돌",
+      "개인적 감정 표현과 공적 책임의 충돌",
+      "사적 영역과 공적 영역의 충돌"
+    ],
+    "cluster_size": 21,
+    "article_count": 21,
+    "cross_validation_confidence": 0.857
+  },
+  {
+    "property_id": "Property_082",
+    "representative_tag": "다층적 이해관계 충돌",
+    "cluster_keywords": [
+      "다층적 이해관계 충돌",
+      "다층적 이해관계자 간 갈등",
+      "다층적 이해관계자 갈등",
+      "다자간 이해관계의 충돌",
+      "복합적 이해관계자들의 갈등",
+      "복합적 이해관계의 충돌",
+      "복합적 이해관계의 충돌",
+      "다자간 이해관계 충돌",
+      "다자간 이해관계 충돌",
+      "다자간 이해관계 충돌"
+    ],
+    "cluster_size": 34,
+    "article_count": 33,
+    "cross_validation_confidence": 0.941
+  },
+  {
+    "property_id": "Property_083",
+    "representative_tag": "위기 상황에 대한 정치적 대응",
+    "cluster_keywords": [
+      "위기 상황에 대한 정치적 대응",
+      "위기 상황에 대한 제도적 대응",
+      "정치적 위기 상황에 대한 대응",
+      "위기 상황에 대한 조직적 대응",
+      "위기 상황에 대한 즉각적 대응",
+      "위기 상황에 대한 신속한 대처",
+      "정치적 위기 상황에서의 신속한 대응",
+      "위기 상황에 대한 정부의 체계적 대응",
+      "신속한 위기 대응",
+      "위기 상황에 대한 정부의 즉각적 대응"
+    ],
+    "cluster_size": 23,
+    "article_count": 23,
+    "cross_validation_confidence": 0.913
+  },
+  {
+    "property_id": "Property_084",
+    "representative_tag": "계절적 주기성을 가진 반복적 현상",
+    "cluster_keywords": [
+      "계절적 주기성을 가진 반복적 현상",
+      "계절적 주기성을 가진 현상",
+      "계절적 주기성을 가진 현상",
+      "계절적 주기성을 가진 현상",
+      "계절적 주기성을 가진 현상",
+      "계절적 주기성을 가진 현상",
+      "계절적 주기성을 가진 경제 현상",
+      "계절적 주기성을 가진 사회적 현상",
+      "계절적 반복성",
+      "계절적 반복성"
+    ],
+    "cluster_size": 14,
+    "article_count": 14,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_085",
+    "representative_tag": "정기적 반복성",
+    "cluster_keywords": [
+      "정기적 반복성",
+      "정기적 반복성",
+      "정기적 반복 패턴",
+      "주기적 반복성",
+      "정기적 순환성",
+      "주기적 반복 현상",
+      "주기적 반복 현상",
+      "정기적 순환 구조",
+      "정기적 순환 구조",
+      "반복적이고 지속적인 패턴"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_086",
+    "representative_tag": "권력 관계의 비대칭성",
+    "cluster_keywords": [
+      "권력 관계의 비대칭성",
+      "권력 관계의 비대칭성",
+      "권력 관계의 비대칭성",
+      "권력 관계의 비대칭성",
+      "권력 관계의 비대칭성",
+      "권력 관계의 비대칭성",
+      "권력 관계의 비대칭성",
+      "권력 관계의 비대칭성",
+      "권력 관계의 비대칭성",
+      "권력 관계의 비대칭성"
+    ],
+    "cluster_size": 19,
+    "article_count": 19,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_087",
+    "representative_tag": "연쇄적 확산 패턴",
+    "cluster_keywords": [
+      "연쇄적 확산 패턴",
+      "연쇄적 확산 패턴",
+      "연쇄적 확산 패턴",
+      "연쇄적 확산 양상",
+      "연쇄적 확산 양상",
+      "연쇄적 확산 양상",
+      "연쇄적 감염 확산",
+      "연쇄적 감염 확산",
+      "연쇄적 감염 확산",
+      "연쇄적 전파 양상"
+    ],
+    "cluster_size": 13,
+    "article_count": 13,
+    "cross_validation_confidence": 0.538
+  },
+  {
+    "property_id": "Property_088",
+    "representative_tag": "수치적 임계점 돌파",
+    "cluster_keywords": [
+      "수치적 임계점 돌파",
+      "수치적 임계점 돌파",
+      "수치적 임계점 돌파",
+      "심리적 임계점 돌파",
+      "심리적 임계점 돌파",
+      "통계적 임계점 돌파",
+      "통계적 임계점 돌파",
+      "임계점 돌파",
+      "임계점 돌파",
+      "임계점 돌파"
+    ],
+    "cluster_size": 15,
+    "article_count": 15,
+    "cross_validation_confidence": 0.6
+  },
+  {
+    "property_id": "Property_089",
+    "representative_tag": "정치적 대립 구조의 표출",
+    "cluster_keywords": [
+      "정치적 대립 구조의 표출",
+      "정치적 대립 구조",
+      "정치적 대립 구조",
+      "정치적 대립 구조",
+      "정치적 대립 구조",
+      "정치적 대립 구조의 공개적 표출",
+      "정치적 대립 구조의 공개적 표출",
+      "정치적 대립 구조의 공개적 표출",
+      "정치적 대립 구조의 표면화",
+      "권력기관 간 대립 구조"
+    ],
+    "cluster_size": 52,
+    "article_count": 50,
+    "cross_validation_confidence": 0.596
+  },
+  {
+    "property_id": "Property_090",
+    "representative_tag": "기업 내부 인사변동",
+    "cluster_keywords": [
+      "기업 내부 인사변동",
+      "기업 내부 인사 변동",
+      "기업 내 인사 변동",
+      "조직 내부 승진을 통한 경영진 교체",
+      "조직 내부 인력 교체",
+      "조직 내부 인사 승진",
+      "조직 내 인사 이동",
+      "조직 내 승진을 통한 지위 변화",
+      "조직 내부 승진을 통한 리더십 전환",
+      "경영진 교체를 통한 조직 변화"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.7
+  },
+  {
+    "property_id": "Property_091",
+    "representative_tag": "반복적 발생 패턴",
+    "cluster_keywords": [
+      "반복적 발생 패턴",
+      "반복적 발생 패턴",
+      "반복적 발생 패턴",
+      "반복적 발생 패턴",
+      "반복적 발생 패턴",
+      "반복적 발생 패턴",
+      "반복적 발생 패턴",
+      "반복적 발생 패턴",
+      "반복적 발생 패턴",
+      "반복적 발생 패턴"
+    ],
+    "cluster_size": 15,
+    "article_count": 15,
+    "cross_validation_confidence": 0.933
+  },
+  {
+    "property_id": "Property_092",
+    "representative_tag": "예측 가능한 주기적 현상",
+    "cluster_keywords": [
+      "예측 가능한 주기적 현상",
+      "예측 가능한 주기적 패턴",
+      "예측 가능한 주기성",
+      "예측 가능한 주기성",
+      "예측 가능한 주기성",
+      "예측 가능한 주기성",
+      "예측 가능한 주기적 변화",
+      "예측 가능한 주기적 변동",
+      "예측 가능한 순환적 패턴",
+      "예측 가능한 패턴"
+    ],
+    "cluster_size": 23,
+    "article_count": 23,
+    "cross_validation_confidence": 0.957
+  },
+  {
+    "property_id": "Property_093",
+    "representative_tag": "민관 협력 체계 구축",
+    "cluster_keywords": [
+      "민관 협력 체계 구축",
+      "민관 협력 체계 구축",
+      "민관 협력 체계 구축",
+      "민관 협력체계 구축",
+      "민관협력 네트워크 구축",
+      "민관 협력 네트워크 형성",
+      "민관 협력 추진",
+      "민관 협력 거버넌스 구축",
+      "민관 협력 플랫폼 구축",
+      "민관 협력체계를 통한 교류"
+    ],
+    "cluster_size": 11,
+    "article_count": 11,
+    "cross_validation_confidence": 0.909
+  },
+  {
+    "property_id": "Property_094",
+    "representative_tag": "시간적 연속성과 지속성",
+    "cluster_keywords": [
+      "시간적 연속성과 지속성",
+      "시간적 연속성과 지속성",
+      "시간적 연속성",
+      "시간적 연속성",
+      "시간적 연속성",
+      "시간적 지속성",
+      "시간적 지속성",
+      "시간적 연속성과 변화",
+      "시간적 연속성과 변화",
+      "시간적 지속성과 반복성"
+    ],
+    "cluster_size": 18,
+    "article_count": 18,
+    "cross_validation_confidence": 0.778
+  },
+  {
+    "property_id": "Property_095",
+    "representative_tag": "정책의 단계적 확대 실행",
+    "cluster_keywords": [
+      "정책의 단계적 확대 실행",
+      "정책 확대의 점진적 추진",
+      "정책의 단계적 도입",
+      "정책 적용 범위의 점진적 확장",
+      "정책적 확대 추진",
+      "단계적 정책 시행",
+      "정책 변경의 단계적 시행",
+      "정책 적용 범위의 확대",
+      "정책 적용 범위의 확대",
+      "정책 적용 범위의 확장"
+    ],
+    "cluster_size": 22,
+    "article_count": 22,
+    "cross_validation_confidence": 0.409
+  },
+  {
+    "property_id": "Property_096",
+    "representative_tag": "정부 주도의 공식적 평가 체계",
+    "cluster_keywords": [
+      "정부 주도의 공식적 평가 체계",
+      "정부 주도의 공식적 평가 체계",
+      "정부 주도의 공식적 인정 체계",
+      "정부 주도의 공식적 인정 체계",
+      "정부 주도의 평가 체계",
+      "정부 주도의 평가 체계",
+      "정부 차원의 공식적 승인 과정",
+      "정부 차원의 공식 승인 과정",
+      "정부 공식 인정 과정",
+      "정부 주도의 체계적 성과 평가"
+    ],
+    "cluster_size": 12,
+    "article_count": 12,
+    "cross_validation_confidence": 0.5
+  },
+  {
+    "property_id": "Property_097",
+    "representative_tag": "정책과 현실 간의 괴리",
+    "cluster_keywords": [
+      "정책과 현실 간의 괴리",
+      "정책과 현실 간의 괴리",
+      "정책과 현실 간의 괴리",
+      "정책 목표와 현실 간의 괴리",
+      "정책 의도와 현실 간의 괴리",
+      "정책 의도와 현실 간의 괴리",
+      "정책과 현실의 괴리",
+      "정책 의도와 실제 결과 간의 괴리",
+      "정책 의도와 실제 결과의 괴리",
+      "정책 취지와 현실 적용의 괴리"
+    ],
+    "cluster_size": 15,
+    "article_count": 15,
+    "cross_validation_confidence": 0.933
+  },
+  {
+    "property_id": "Property_098",
+    "representative_tag": "지역별 차등 발생",
+    "cluster_keywords": [
+      "지역별 차등 발생",
+      "지역별 차등 발생",
+      "지역별 차등 발생",
+      "지역별 차등 현상",
+      "지역별 차등 발현",
+      "지역별 차등 분포",
+      "지역별 차등적 현상",
+      "지역별 차별적 발생",
+      "지역별 불균등 분포",
+      "지역별 불균등 분포"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_099",
+    "representative_tag": "예방 중심의 사전적 대응",
+    "cluster_keywords": [
+      "예방 중심의 사전적 대응",
+      "예방 중심의 사전적 대응 방식",
+      "예방 중심의 사전적 접근",
+      "예방 중심의 사전적 개입",
+      "예방 중심의 선제적 접근",
+      "사전 예방적 접근",
+      "예방적 접근을 통한 사전 대응",
+      "예방 중심의 선제적 대응",
+      "예방 중심의 사전적 위험 관리",
+      "예방적 접근 방식"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_100",
+    "representative_tag": "지역적 집중 현상",
+    "cluster_keywords": [
+      "지역적 집중 현상",
+      "지역적 집중 현상",
+      "지역적 집중 현상",
+      "지역적 집중 현상",
+      "지역적 집중 현상",
+      "지역적 집중 현상",
+      "지역적 집중 발생",
+      "지역적 집중 발생",
+      "특정 지역 집중 현상",
+      "지역적 집중성"
+    ],
+    "cluster_size": 28,
+    "article_count": 28,
+    "cross_validation_confidence": 0.571
+  },
+  {
+    "property_id": "Property_101",
+    "representative_tag": "다층적 기관 간 협력 체계",
+    "cluster_keywords": [
+      "다층적 기관 간 협력 체계",
+      "다층적 기관 간 협력 체계",
+      "다층적 기관 간 협력 체계",
+      "다층적 기관 간 협력 체계",
+      "다층적 기관 간 협력체계",
+      "다층적 기관 협력체계",
+      "다층적 기관 협력 체계",
+      "다층적 기관 간 협력 구조",
+      "다층적 기관 간 협력 구조",
+      "다층적 기관 간 협력체계 가동"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_102",
+    "representative_tag": "다기관 협력체계 구축",
+    "cluster_keywords": [
+      "다기관 협력체계 구축",
+      "다기관 협력체계 구축",
+      "다기관 협력체계 구축",
+      "다기관 협력체계 구축",
+      "다기관 협력체계 구축",
+      "다기관 협력체계 구축",
+      "다기관 협력체계 구축",
+      "다기관 협력체계 구축",
+      "다기관 협력체계 구축",
+      "다기관 협력 체계 구축"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_103",
+    "representative_tag": "행정기관의 예방적 조치",
+    "cluster_keywords": [
+      "행정기관의 예방적 조치",
+      "예방적 행정조치",
+      "예방적 행정활동",
+      "예방적 행정활동",
+      "행정기관의 사전 예방적 대응",
+      "예방적 차원의 행정조치",
+      "행정기관의 예방적 규제 조치",
+      "예방적 행정집행",
+      "행정기관의 예방적 점검 조치",
+      "행정기관의 예방적 단속 활동"
+    ],
+    "cluster_size": 16,
+    "article_count": 16,
+    "cross_validation_confidence": 0.938
+  },
+  {
+    "property_id": "Property_104",
+    "representative_tag": "정기적 행정 절차의 수행",
+    "cluster_keywords": [
+      "정기적 행정 절차의 수행",
+      "정기적 행정 절차의 수행",
+      "정기적 행정 절차의 수행",
+      "정기적 행정 업무의 수행",
+      "정기적 행정 활동",
+      "정기적 행정 절차",
+      "정기적 행정 집행",
+      "행정기관의 정기적 업무 수행",
+      "행정기관의 정기적 업무 수행",
+      "정기적 행정 감시 활동"
+    ],
+    "cluster_size": 19,
+    "article_count": 19,
+    "cross_validation_confidence": 0.947
+  },
+  {
+    "property_id": "Property_105",
+    "representative_tag": "공공-민간 협력 구조",
+    "cluster_keywords": [
+      "공공-민간 협력 구조",
+      "공공-민간 협력 구조",
+      "공공-민간 협력 구조",
+      "공공-민간 협력 구조",
+      "공공-민간 협력 구조",
+      "공공-민간 협력 구조",
+      "공공-민간 협력 구조",
+      "공공-민간 협력 구조",
+      "공공-민간 협력 구조",
+      "공공-민간 협력 구조"
+    ],
+    "cluster_size": 22,
+    "article_count": 22,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_106",
+    "representative_tag": "정부 주도의 정책적 개입",
+    "cluster_keywords": [
+      "정부 주도의 정책적 개입",
+      "정부 주도의 정책적 개입",
+      "정부 주도의 정책적 개입",
+      "정부 주도의 정책적 개입",
+      "정부 주도의 정책적 개입",
+      "정부 주도의 정책적 개입",
+      "정부 주도의 정책적 개입",
+      "정부 주도의 정책적 개입",
+      "정부 주도의 정책적 개입",
+      "정부 주도의 정책적 개입"
+    ],
+    "cluster_size": 21,
+    "article_count": 21,
+    "cross_validation_confidence": 0.952
+  },
+  {
+    "property_id": "Property_107",
+    "representative_tag": "공공-민간 협력 체계",
+    "cluster_keywords": [
+      "공공-민간 협력 체계",
+      "공공-민간 협력 체계",
+      "정부-민간 협력 체계",
+      "정부-민간 협력체계",
+      "공공-민간 협력 체계 구축",
+      "공공-민간 협력 체계 구축",
+      "정부-민간 협력체계 구축",
+      "정부-민간 협력체계 구축",
+      "정부-지자체-민간 협력 체계",
+      "공무원-민간 협력 체계"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_108",
+    "representative_tag": "지방정부 주도의 정책 추진",
+    "cluster_keywords": [
+      "지방정부 주도의 정책 추진",
+      "지방정부 주도의 정책 추진",
+      "지방정부 주도의 정책 추진",
+      "지방정부 주도의 정책 시행",
+      "지방정부 주도의 정책 실행",
+      "지방정부 주도의 정책 수립",
+      "정부 주도의 정책 추진",
+      "지방정부 주도의 산업정책 추진",
+      "지방정부 주도의 정책 확대",
+      "정부 주도의 경제 정책 추진"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 0.8
+  },
+  {
+    "property_id": "Property_109",
+    "representative_tag": "전년 대비 감소 추세",
+    "cluster_keywords": [
+      "전년 대비 감소 추세",
+      "전년 대비 감소 추세",
+      "전년 대비 감소 추세",
+      "전년 대비 감소 추세",
+      "전년 대비 급격한 감소 추세",
+      "전년 대비 급격한 하락세",
+      "전년 동기 대비 하락세",
+      "전월 대비 하락 추세",
+      "급격한 하락 추세",
+      "급격한 하락 추세"
+    ],
+    "cluster_size": 13,
+    "article_count": 13,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_110",
+    "representative_tag": "지속적 하락 추세",
+    "cluster_keywords": [
+      "지속적 하락 추세",
+      "지속적 하락 추세",
+      "지속적 하락 추세",
+      "지속적 하락 추세",
+      "지속적 하락 추세",
+      "지속적 하락 추세",
+      "지속적 하락 추세",
+      "연속적 하락 추세",
+      "연속적 하락 추세",
+      "연속적 하락 추세"
+    ],
+    "cluster_size": 14,
+    "article_count": 14,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_111",
+    "representative_tag": "지속적 증가 추세",
+    "cluster_keywords": [
+      "지속적 증가 추세",
+      "지속적 증가 추세",
+      "지속적 증가 추세",
+      "지속적 증가 추세",
+      "지속적 증가 추세",
+      "지속적 증가 추세",
+      "지속적 증가 추세",
+      "지속적 증가 추세",
+      "지속적 증가 추세",
+      "지속적 증가 추세"
+    ],
+    "cluster_size": 10,
+    "article_count": 10,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_112",
+    "representative_tag": "지속적 상승 추세",
+    "cluster_keywords": [
+      "지속적 상승 추세",
+      "지속적 상승 추세",
+      "지속적 상승 추세",
+      "지속적 상승 추세",
+      "지속적 상승 추세",
+      "지속적 상승 추세",
+      "지속적 상승 추세",
+      "지속적 상승 추세",
+      "지속적인 상승 추세",
+      "연속적 상승 추세"
+    ],
+    "cluster_size": 14,
+    "article_count": 14,
+    "cross_validation_confidence": 1.0
+  },
+  {
+    "property_id": "Property_113",
+    "representative_tag": "단기적 변동성",
+    "cluster_keywords": [
+      "단기적 변동성",
+      "단기적 변동성",
+      "단기적 변동성",
+      "단기적 변동성",
+      "단기적 변동성",
+      "단기적 변동성",
+      "단기 변동성",
+      "단기적 가격 변동성",
+      "단기적 가격 변동성",
+      "단기적 가격 변동성"
+    ],
+    "cluster_size": 14,
+    "article_count": 14,
+    "cross_validation_confidence": 1.0
+  }
+]
