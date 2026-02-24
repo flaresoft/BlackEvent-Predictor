@@ -445,25 +445,28 @@ def build_tag_article_map(tagged_df: pd.DataFrame) -> tuple[list[str], list, dic
 def embed_tags(tags: list[str], model_name: str) -> np.ndarray:
     """
     태그를 임베딩 벡터로 변환한다.
+    CUDA 사용 가능 시 GPU + FP16으로 가속한다.
     모델을 로드 → 인코딩 → 명시적 해제하여 메모리를 관리한다.
     """
+    import torch
     from sentence_transformers import SentenceTransformer
 
-    logger.info(f"임베딩 모델 로드: {model_name}")
-    model = SentenceTransformer(model_name)
-    embeddings = model.encode(tags, show_progress_bar=True, batch_size=64)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    logger.info(f"임베딩 모델 로드: {model_name} (device={device})")
+    model = SentenceTransformer(model_name, device=device)
+    if device == "cuda":
+        model.half()
+        logger.info("FP16(반정밀도) 모드 활성화 — VRAM 절감 + 속도 향상")
+
+    embeddings = model.encode(tags, show_progress_bar=True, batch_size=256)
     logger.info(f"임베딩 완료: {len(tags)}개 태그 → {embeddings.shape}")
 
     # 메모리 해제
     del model
     gc.collect()
-    try:
-        import torch
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-            logger.info("GPU 메모리 해제 완료")
-    except ImportError:
-        pass
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+        logger.info("GPU 메모리 해제 완료")
 
     return embeddings
 

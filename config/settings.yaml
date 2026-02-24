@@ -54,7 +54,7 @@ dictionary:
 
 # Module 4: 전체 코퍼스 태깅 (임베딩 유사도 매칭)
 tagging:
-  encode_batch_size: 256       # sentence-transformers model.encode() 배치 크기
+  encode_batch_size: 512       # sentence-transformers model.encode() 배치 크기
   threshold_min: 0.3           # 캘리브레이션 탐색 시작값
   threshold_max: 0.8           # 캘리브레이션 탐색 종료값
   threshold_step: 0.05         # 캘리브레이션 탐색 단위
