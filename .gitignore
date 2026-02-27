@@ -2,6 +2,8 @@
 data/raw/
 data/processed/*.parquet
 data/processed/*.csv
+!data/processed/black_events.csv
+!data/processed/control_dates.csv
 data/outputs/*.parquet
 data/outputs/module4_checkpoints/
 
