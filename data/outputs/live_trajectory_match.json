@@ -1,0 +1,24 @@
+{
+  "calibration": {
+    "threshold": 0.9873,
+    "margin": 0.0685,
+    "ctrl_sim_mean": 0.8786,
+    "ctrl_sim_std": 0.1369,
+    "ctrl_sim_percentile": 95.0
+  },
+  "control_separation": {
+    "n_control": 423,
+    "mean_similarity": 0.8786,
+    "std_similarity": 0.1369,
+    "max_similarity": 0.9984,
+    "p95_similarity": 0.9873
+  },
+  "loo_type_accuracy": 0.7021,
+  "loo_mean_similarity": 0.6761,
+  "time_split": {
+    "skipped": true,
+    "reason": "only_0_clusters"
+  },
+  "normalization_method": "global",
+  "alpha": 0.5
+}

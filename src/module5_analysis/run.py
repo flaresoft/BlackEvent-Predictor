@@ -60,29 +60,76 @@ _setup_korean_font()
 
 
 # ──────────────────────────────────────────────
-# 데이터 준비
+# 데이터 준비 (메모리 최적화: 일별 집계)
 # ──────────────────────────────────────────────
-def load_tagged_corpus(processed_path, date_min=None, date_max=None) -> pd.DataFrame:
-    """태깅된 코퍼스를 로드하고 properties를 리스트로 보장한다.
-    date_min, date_max가 주어지면 해당 범위만 필터링하여 로드 (메모리 절약).
+def load_daily_aggregation(processed_path, date_min=None, date_max=None):
+    """코퍼스를 row group 단위로 읽으며 일별 성질 빈도로 집계한다.
+    46.5M행 → ~7,300일 수준으로 축소하여 메모리를 극적으로 절약한다.
+
+    Returns:
+        dates_arr: 정렬된 numpy datetime64 배열 (고유 날짜)
+        daily_counts: dates_arr에 대응하는 [{property_id: count}, ...] 리스트
+        total_articles: 처리된 총 기사 수
     """
     import pyarrow.parquet as pq
+    import datetime as dt
 
     parquet_path = processed_path / "corpus_tagged.parquet"
+    pf = pq.ParquetFile(parquet_path)
 
-    if date_min is not None and date_max is not None:
-        filters = [("date", ">=", date_min), ("date", "<=", date_max)]
-        table = pq.read_table(parquet_path, filters=filters)
-        df = table.to_pandas()
-    else:
-        df = pd.read_parquet(parquet_path)
+    # 날짜 필터 준비
+    date_min_ts = None
+    date_max_ts = None
+    if date_min is not None:
+        date_min_ts = pd.Timestamp(date_min)
+    if date_max is not None:
+        date_max_ts = pd.Timestamp(date_max)
 
-    df["properties"] = df["properties"].apply(
-        lambda x: json.loads(x) if isinstance(x, str) else (x if isinstance(x, list) else [])
-    )
-    df["date"] = pd.to_datetime(df["date"])
-    df = df.sort_values("date").reset_index(drop=True)
-    return df
+    daily = defaultdict(lambda: defaultdict(int))
+    total_articles = 0
+    num_rg = pf.metadata.num_row_groups
+
+    for rg_idx in range(num_rg):
+        table = pf.read_row_group(rg_idx, columns=["date", "properties"])
+        chunk_df = table.to_pandas()
+        del table
+
+        chunk_df["date"] = pd.to_datetime(chunk_df["date"])
+
+        # 날짜 필터
+        if date_min_ts is not None and date_max_ts is not None:
+            mask = (chunk_df["date"] >= date_min_ts) & (chunk_df["date"] <= date_max_ts)
+            chunk_df = chunk_df[mask]
+
+        rg_count = len(chunk_df)
+        total_articles += rg_count
+
+        # 일별 성질 빈도 집계
+        for date_val, props in zip(chunk_df["date"].values, chunk_df["properties"].values):
+            if isinstance(props, np.ndarray):
+                props_list = props.tolist()
+            elif isinstance(props, str):
+                props_list = json.loads(props)
+            elif isinstance(props, list):
+                props_list = props
+            else:
+                continue
+            for prop in props_list:
+                daily[date_val][prop] += 1
+
+        del chunk_df
+        if (rg_idx + 1) % 5 == 0 or rg_idx == num_rg - 1:
+            logger.info(
+                f"  일별 집계: RG {rg_idx+1}/{num_rg} "
+                f"(누적 {total_articles:,}건, 고유 날짜 {len(daily):,}개)"
+            )
+
+    # 정렬
+    sorted_dates = sorted(daily.keys())
+    dates_arr = np.array(sorted_dates, dtype="datetime64[ns]")
+    counts_list = [dict(daily[d]) for d in sorted_dates]
+
+    return dates_arr, counts_list, total_articles
 
 
 def prepare_event_data(processed_path) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -93,29 +140,21 @@ def prepare_event_data(processed_path) -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 # ──────────────────────────────────────────────
-# 윈도우 내 기사 캐시 (성능 최적화 핵심)
+# 일별 집계 기반 윈도우 프로파일 계산
 # ──────────────────────────────────────────────
-def precompute_window_profiles(
-    corpus_df: pd.DataFrame,
+def compute_window_from_daily(
+    dates_arr: np.ndarray,
+    daily_counts: list[dict[str, int]],
     ref_dates: list[pd.Timestamp],
     window_days: int,
-    all_properties: list[str],
 ) -> tuple[dict[int, set[str]], dict[int, dict[str, int]]]:
-    """
-    각 기준일에 대해 윈도우 내 기사를 1번만 조회하여
-    (1) 존재 기반: 어떤 성질이 존재하는지 (set)
-    (2) 빈도 기반: 각 성질이 몇 번 등장하는지 (dict)
-    를 사전 계산한다.
+    """일별 집계 데이터에서 윈도우 프로파일을 계산한다.
+    ~7,300개 일별 엔트리만 탐색하므로 46.5M행 대비 극히 빠르다.
 
     Returns:
         presence_map: {date_idx: set of property_ids present}
         frequency_map: {date_idx: {property_id: count}}
     """
-    # corpus를 날짜 정렬 후 numpy array로 변환 (binary search용)
-    corpus_sorted = corpus_df.sort_values("date").reset_index(drop=True)
-    dates_array = corpus_sorted["date"].values  # numpy datetime64
-    props_array = corpus_sorted["properties"].values
-
     presence_map = {}
     frequency_map = {}
 
@@ -123,85 +162,18 @@ def precompute_window_profiles(
         start = ref_date - pd.Timedelta(days=window_days)
         end = ref_date - pd.Timedelta(days=1)
 
-        # binary search로 윈도우 내 기사 인덱스 범위
         start_np = np.datetime64(start)
         end_np = np.datetime64(end)
-        i_start = np.searchsorted(dates_array, start_np, side="left")
-        i_end = np.searchsorted(dates_array, end_np, side="right")
+        i_start = np.searchsorted(dates_arr, start_np, side="left")
+        i_end = np.searchsorted(dates_arr, end_np, side="right")
 
-        # 해당 윈도우 내 모든 성질을 한 번에 수집
         present_set = set()
         freq_dict = defaultdict(int)
 
         for i in range(i_start, i_end):
-            for prop in props_array[i]:
+            for prop, count in daily_counts[i].items():
                 present_set.add(prop)
-                freq_dict[prop] += 1
-
-        presence_map[idx] = present_set
-        frequency_map[idx] = dict(freq_dict)
-
-    return presence_map, frequency_map
-
-
-def precompute_window_profiles_detailed(
-    corpus_df: pd.DataFrame,
-    ref_dates: list[pd.Timestamp],
-    window_days: int,
-) -> dict[int, list[tuple[str, np.datetime64]]]:
-    """
-    최대 윈도우로 1회 호출하여 각 기준일의 윈도우 내 (property, date) 쌍을 수집한다.
-    서브 윈도우 계산 시 날짜 필터만 적용하면 된다.
-
-    Returns:
-        detailed_map: {date_idx: [(property_id, article_date), ...]}
-    """
-    corpus_sorted = corpus_df.sort_values("date").reset_index(drop=True)
-    dates_array = corpus_sorted["date"].values
-    props_array = corpus_sorted["properties"].values
-
-    detailed_map = {}
-
-    for idx, ref_date in enumerate(ref_dates):
-        start = ref_date - pd.Timedelta(days=window_days)
-        end = ref_date - pd.Timedelta(days=1)
-
-        start_np = np.datetime64(start)
-        end_np = np.datetime64(end)
-        i_start = np.searchsorted(dates_array, start_np, side="left")
-        i_end = np.searchsorted(dates_array, end_np, side="right")
-
-        records = []
-        for i in range(i_start, i_end):
-            article_date = dates_array[i]
-            for prop in props_array[i]:
-                records.append((prop, article_date))
-
-        detailed_map[idx] = records
-
-    return detailed_map
-
-
-def _derive_from_detailed(
-    detailed_map: dict[int, list[tuple[str, np.datetime64]]],
-    ref_dates: list[pd.Timestamp],
-    window_days: int,
-) -> tuple[dict[int, set[str]], dict[int, dict[str, int]]]:
-    """detailed_map에서 서브 윈도우의 presence/frequency를 날짜 필터로 산출한다."""
-    presence_map = {}
-    frequency_map = {}
-
-    for idx, ref_date in enumerate(ref_dates):
-        start_np = np.datetime64(ref_date - pd.Timedelta(days=window_days))
-        end_np = np.datetime64(ref_date - pd.Timedelta(days=1))
-
-        present_set = set()
-        freq_dict = defaultdict(int)
-
-        for prop, article_date in detailed_map[idx]:
-            if start_np <= article_date <= end_np:
-                present_set.add(prop)
-                freq_dict[prop] += 1
+                freq_dict[prop] += count
 
         presence_map[idx] = present_set
         frequency_map[idx] = dict(freq_dict)
@@ -213,32 +185,18 @@ def _derive_from_detailed(
 # 분석 1: 단일 성질 검정 (존재 + 빈도)
 # ──────────────────────────────────────────────
 def compute_property_frequencies(
-    corpus_df: pd.DataFrame,
-    be_dates: list[pd.Timestamp],
-    ctrl_dates: list[pd.Timestamp],
+    be_presence: dict[int, set[str]],
+    be_frequency: dict[int, dict[str, int]],
+    ctrl_presence: dict[int, set[str]],
+    ctrl_frequency: dict[int, dict[str, int]],
+    be_dates: list,
+    ctrl_dates: list,
     window_days: int,
     all_properties: list[str],
-    be_detailed: dict = None,
-    ctrl_detailed: dict = None,
 ) -> pd.DataFrame:
+    """BlackEvent 직전 vs 대조군의 성질별 출현을 계산한다.
+    사전 계산된 presence/frequency 맵을 직접 사용한다.
     """
-    BlackEvent 직전 vs 대조군의 성질별 출현을 계산한다.
-    기준일 하나당 get_articles_in_window는 1번만 호출.
-    존재 기반(presence) + 빈도 기반(frequency) 동시 산출.
-
-    be_detailed / ctrl_detailed가 제공되면, 날짜 필터로 서브 윈도우를 산출한다.
-    """
-    if be_detailed is not None and ctrl_detailed is not None:
-        be_presence, be_frequency = _derive_from_detailed(be_detailed, be_dates, window_days)
-        ctrl_presence, ctrl_frequency = _derive_from_detailed(ctrl_detailed, ctrl_dates, window_days)
-    else:
-        be_presence, be_frequency = precompute_window_profiles(
-            corpus_df, be_dates, window_days, all_properties
-        )
-        ctrl_presence, ctrl_frequency = precompute_window_profiles(
-            corpus_df, ctrl_dates, window_days, all_properties
-        )
-
     records = []
 
     for prop in all_properties:
@@ -372,7 +330,8 @@ def statistical_test(freq_df: pd.DataFrame, significance: float = 0.05) -> pd.Da
 # 분석 2: 최적 윈도우 탐색
 # ──────────────────────────────────────────────
 def find_optimal_windows(
-    corpus_df: pd.DataFrame,
+    dates_arr: np.ndarray,
+    daily_counts: list[dict[str, int]],
     events_df: pd.DataFrame,
     control_df: pd.DataFrame,
     all_properties: list[str],
@@ -380,25 +339,30 @@ def find_optimal_windows(
     significance: float = 0.05,
     min_effect_size: float = 0.2,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """각 성질마다 가장 유의미한 윈도우를 찾는다."""
+    """각 성질마다 가장 유의미한 윈도우를 찾는다.
+    일별 집계 데이터를 사용하여 메모리 효율적으로 계산한다.
+    """
     be_dates = events_df["first_shock_date"].tolist()
     ctrl_dates = control_df["date"].tolist()
 
-    # 최대 윈도우로 1회만 사전 계산, 서브 윈도우는 날짜 필터로 산출
-    max_window = max(windows)
-    logger.info(f"최대 윈도우 {max_window}일로 사전 계산 중...")
-    be_detailed = precompute_window_profiles_detailed(corpus_df, be_dates, max_window)
-    ctrl_detailed = precompute_window_profiles_detailed(corpus_df, ctrl_dates, max_window)
-
     all_results = []
-    for window in windows:
-        logger.info(f"윈도우 {window}일 분석 중...")
+    for wi, window in enumerate(windows, 1):
+        logger.info(f"[{wi}/{len(windows)}] 윈도우 {window}일 분석 중...")
+        be_presence, be_frequency = compute_window_from_daily(
+            dates_arr, daily_counts, be_dates, window
+        )
+        ctrl_presence, ctrl_frequency = compute_window_from_daily(
+            dates_arr, daily_counts, ctrl_dates, window
+        )
+
         freq_df = compute_property_frequencies(
-            corpus_df, be_dates, ctrl_dates, window, all_properties,
-            be_detailed=be_detailed, ctrl_detailed=ctrl_detailed,
+            be_presence, be_frequency,
+            ctrl_presence, ctrl_frequency,
+            be_dates, ctrl_dates, window, all_properties,
         )
         test_df = statistical_test(freq_df, significance)
         all_results.append(test_df)
+        logger.info(f"[{wi}/{len(windows)}] 윈도우 {window}일 완료")
 
     combined = pd.concat(all_results, ignore_index=True)
 
@@ -412,8 +376,6 @@ def find_optimal_windows(
             combined.loc[mask, "p_adjusted"] = p_adj
 
     # significant 판정을 보정된 p-value + 효과 크기 기준으로 갱신
-    # presence: p_adjusted < significance AND abs(effect_size) >= min_effect_size
-    # frequency: p_adjusted < significance (effect_size 없음)
     is_presence = combined["analysis_type"] == "presence"
     combined["significant"] = False
     combined.loc[is_presence, "significant"] = (
@@ -430,10 +392,21 @@ def find_optimal_windows(
     save_cols = [c for c in combined.columns if c not in ("be_freq_counts", "ctrl_freq_counts")]
     combined_save = combined[save_cols]
 
-    # 각 성질별 최적 윈도우: presence 기준 p_adjusted가 가장 작은 윈도우
+    # 각 성질별 최적 윈도우 선택
+    # presence가 포화 상태(be_rate==ctrl_rate==1.0)이면 frequency 기준으로 전환
     presence_df = combined[combined["analysis_type"] == "presence"]
+    presence_saturated = (
+        (presence_df["be_rate"] == 1.0) & (presence_df["ctrl_rate"] == 1.0)
+    ).all()
+
+    if presence_saturated:
+        logger.info("Presence 분석 포화 (모든 성질 100% 출현) → frequency 기준으로 최적 윈도우 선택")
+        select_df = combined[combined["analysis_type"] == "frequency"]
+    else:
+        select_df = presence_df
+
     optimal = (
-        presence_df
+        select_df
         .sort_values("p_adjusted")
         .groupby("property_id")
         .first()
@@ -448,7 +421,8 @@ def find_optimal_windows(
 # 분석 3: 성질 조합 패턴 (연관규칙 마이닝)
 # ──────────────────────────────────────────────
 def build_transaction_matrix(
-    corpus_df: pd.DataFrame,
+    dates_arr: np.ndarray,
+    daily_counts: list[dict[str, int]],
     dates_df: pd.DataFrame,
     date_col: str,
     optimal_windows: pd.DataFrame,
@@ -456,40 +430,32 @@ def build_transaction_matrix(
 ) -> pd.DataFrame:
     """
     각 기준일에 대해 해당 윈도우 내 존재하는 성질의 원-핫 매트릭스를 생성한다.
-    dates_df: 기준 날짜가 담긴 DataFrame
-    date_col: 날짜 컬럼명
+    일별 집계 데이터를 사용하여 메모리 효율적으로 계산한다.
     """
     # 성질별 최적 윈도우 매핑
     prop_window = {}
     for _, row in optimal_windows.iterrows():
         prop_window[row["property_id"]] = int(row["optimal_window"])
 
-    # 각 성질의 최대 윈도우로 한 번에 기사 수집, 이후 성질별로 서브 필터
-    max_window = max(prop_window.values()) if prop_window else 30
-
     ref_dates = dates_df[date_col].tolist()
-    presence_map, _ = precompute_window_profiles(
-        corpus_df, ref_dates, max_window, all_properties
-    )
-
-    # 성질별 최적 윈도우로 재검증이 필요하지만,
-    # max_window로 뽑은 결과의 superset이므로 최적 윈도우별 재계산
-    # → 성질별 윈도우가 다르면 각각 계산
-    rows = []
-    unique_windows = set(prop_window.values())
+    unique_windows = set(prop_window.values()) if prop_window else {30}
 
     # 윈도우별 프로파일 캐시
-    window_profiles = {max_window: presence_map}
+    window_profiles = {}
     for w in unique_windows:
-        if w != max_window:
-            wp, _ = precompute_window_profiles(corpus_df, ref_dates, w, all_properties)
-            window_profiles[w] = wp
+        wp, _ = compute_window_from_daily(dates_arr, daily_counts, ref_dates, w)
+        window_profiles[w] = wp
 
+    # 기본 윈도우 (fallback)
+    max_window = max(unique_windows)
+    default_profile = window_profiles[max_window]
+
+    rows = []
     for idx in range(len(ref_dates)):
         prop_flags = {}
         for prop in all_properties:
             w = prop_window.get(prop, 30)
-            profile = window_profiles.get(w, presence_map)
+            profile = window_profiles.get(w, default_profile)
             prop_flags[prop] = prop in profile[idx]
         rows.append(prop_flags)
 
@@ -537,7 +503,9 @@ def apriori_analysis(
         full_itemset = frozenset(row["antecedents"]) | frozenset(row["consequents"])
         return ctrl_support.get(full_itemset, 0.0)
 
-    be_rules["ctrl_support"] = be_rules.apply(_ctrl_support_for_rule, axis=1)
+    be_rules["ctrl_support"] = [
+        _ctrl_support_for_rule(row) for _, row in be_rules.iterrows()
+    ]
 
     # frozenset → list 변환 (직렬화용)
     be_rules["antecedents"] = be_rules["antecedents"].apply(lambda x: sorted(x))
@@ -588,7 +556,7 @@ def run():
     outputs_path = get_path(config, "outputs")
     analysis_config = config["analysis"]
 
-    # 데이터 로드: 이벤트를 먼저 읽어 날짜 범위를 결정한 뒤 코퍼스를 필터 로드
+    # 데이터 로드: 이벤트를 먼저 읽어 날짜 범위를 결정
     events_df, control_df = prepare_event_data(processed_path)
 
     max_window = max(analysis_config["windows"])  # 가장 넓은 윈도우 (기본 60일)
@@ -599,9 +567,13 @@ def run():
     date_min = (all_ref_dates.min() - pd.Timedelta(days=max_window)).strftime("%Y-%m-%d")
     date_max = all_ref_dates.max().strftime("%Y-%m-%d")
 
-    corpus_df = load_tagged_corpus(processed_path, date_min=date_min, date_max=date_max)
+    # 일별 집계로 로드 (46.5M행을 메모리에 올리지 않음)
+    logger.info(f"코퍼스 일별 집계 시작 (날짜 범위: {date_min} ~ {date_max})...")
+    dates_arr, daily_counts, total_articles = load_daily_aggregation(
+        processed_path, date_min=date_min, date_max=date_max
+    )
     logger.info(
-        f"데이터 로드: 코퍼스 {len(corpus_df)}건 (날짜 범위: {date_min} ~ {date_max}), "
+        f"데이터 로드: 코퍼스 {total_articles:,}건 → 일별 집계 {len(dates_arr):,}일, "
         f"BlackEvent {len(events_df)}건, 대조군 {len(control_df)}건"
     )
 
@@ -613,14 +585,15 @@ def run():
 
     # ── 분석 1 & 2: 단일 성질 검정 + 최적 윈도우 ──
     optimal_df, combined_df = find_optimal_windows(
-        corpus_df, events_df, control_df,
+        dates_arr, daily_counts,
+        events_df, control_df,
         all_properties,
         windows=analysis_config["windows"],
         significance=analysis_config["significance_level"],
         min_effect_size=analysis_config.get("min_effect_size", 0.2),
     )
 
-    # combined_df 전체 저장 (#7)
+    # combined_df 전체 저장
     combined_df.to_csv(outputs_path / "all_window_results.csv", index=False)
     logger.info(f"전체 윈도우 결과 저장: {outputs_path / 'all_window_results.csv'}")
 
@@ -640,18 +613,22 @@ def run():
     loose_df = optimal_df[optimal_df["p_adjusted"] < loose_threshold]
     combo_candidate_properties = loose_df["property_id"].tolist()
 
-    logger.info(f"조합 분석 후보: 엄격 기준 {len(strict_properties)}개, 조합 후보군 {len(combo_candidate_properties)}개 (p_adjusted < {loose_threshold})")
+    logger.info(
+        f"조합 분석 후보: 엄격 기준 {len(strict_properties)}개, "
+        f"조합 후보군 {len(combo_candidate_properties)}개 (p_adjusted < {loose_threshold})"
+    )
 
     if len(combo_candidate_properties) >= 2:
-        # 시그니처 단순화: dates_df + date_col만 전달 (#6)
         be_dates_df = events_df[["first_shock_date"]].copy()
         ctrl_dates_df = control_df[["date"]].copy()
 
         be_matrix = build_transaction_matrix(
-            corpus_df, be_dates_df, "first_shock_date", optimal_df, combo_candidate_properties
+            dates_arr, daily_counts,
+            be_dates_df, "first_shock_date", optimal_df, combo_candidate_properties
         )
         ctrl_matrix = build_transaction_matrix(
-            corpus_df, ctrl_dates_df, "date", optimal_df, combo_candidate_properties
+            dates_arr, daily_counts,
+            ctrl_dates_df, "date", optimal_df, combo_candidate_properties
         )
 
         apriori_config = analysis_config["apriori"]

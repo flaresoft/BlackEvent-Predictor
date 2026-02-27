@@ -9,8 +9,10 @@ data/outputs/module4_checkpoints/
 *.parquet
 .bigkinds_converter_state.json
 
-# ── 환경 변수 ──
+# ── 환경 변수 / 인증 ──
 .env
+config/bigkinds_cookie.txt
+data/outputs/*.log
 
 # ── Python ──
 __pycache__/

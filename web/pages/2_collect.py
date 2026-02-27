@@ -280,36 +280,59 @@ with col_verify:
         if not cookie_text:
             st.error("쿠키를 먼저 입력하세요.")
         else:
-            with st.spinner("BigKinds에 테스트 요청 중..."):
+            with st.spinner("BigKinds 다운로드 엔드포인트로 인증 테스트 중..."):
                 try:
+                    import json as _json
+                    import urllib.parse
+
                     import requests
                     from src.daily_pipeline.run import _build_bigkinds_param
 
                     session = requests.Session()
-                    headers = {
-                        "Accept": "application/json, text/javascript, */*; q=0.01",
-                        "Content-Type": "application/json;charset=UTF-8",
+
+                    # 다운로드 엔드포인트로 테스트 (검색 API는 비로그인도 응답함)
+                    headers_dl = {
+                        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                        "Content-Type": "application/x-www-form-urlencoded",
                         "Origin": BIGKINDS_BASE,
                         "Referer": f"{BIGKINDS_BASE}/v2/news/search.do",
                         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
-                        "X-Requested-With": "XMLHttpRequest",
                         "Cookie": cookie_text,
                     }
-                    param = _build_bigkinds_param("2025-01-01", "2025-01-31")
-                    param["resultNumber"] = 1
+                    param = _build_bigkinds_param("2025-01-02", "2025-01-02")
+                    param["sectionDiv"] = "1000"
+                    param["realURI"] = "/api/news/previewData.do"
+                    param["interval"] = 2
+
+                    form_data = "jsonSearchParam=" + urllib.parse.quote(
+                        _json.dumps(param, ensure_ascii=False)
+                    )
                     resp = session.post(
-                        f"{BIGKINDS_BASE}/api/news/search.do",
-                        headers=headers,
-                        json=param,
-                        timeout=15,
+                        f"{BIGKINDS_BASE}/api/news/download.do",
+                        headers=headers_dl,
+                        data=form_data.encode("utf-8"),
+                        timeout=30,
+                        stream=True,
                     )
                     resp.raise_for_status()
-                    count = resp.json().get("totalCount", 0)
 
-                    if count > 0:
-                        st.success(f"쿠키 유효! (2025-01 기사 {count:,}건 확인)")
+                    content_type = resp.headers.get("Content-Type", "")
+                    content_disp = resp.headers.get("Content-Disposition", "")
+                    # 본문은 읽지 않고 헤더만 확인 후 닫기
+                    resp.close()
+
+                    if "html" in content_type.lower() or (
+                        not content_disp and "octet" not in content_type.lower()
+                        and "excel" not in content_type.lower()
+                        and "spreadsheet" not in content_type.lower()
+                    ):
+                        st.error(
+                            "쿠키 만료 또는 무효 — BigKinds에 다시 로그인하세요.\n\n"
+                            f"응답 Content-Type: `{content_type}`"
+                        )
                     else:
-                        st.error("쿠키 만료 또는 무효 — 기사 0건 반환")
+                        st.success("쿠키 유효! (다운로드 인증 확인)")
+
                 except requests.exceptions.ConnectionError:
                     st.error("BigKinds 서버에 연결할 수 없습니다.")
                 except Exception as e:

@@ -23,7 +23,7 @@ from pathlib import Path
 # ============================================================
 
 # F12 → Network → 아무 요청 → Headers → Cookie 값 전체 복사해서 붙여넣기
-COOKIE_STRING = "NCPVPCLBTG=7e3126e4020ff3044fad9532a9c561180183efeb2cf78a256ad85bdee9bd72b6; _gid=GA1.3.332216020.1771718329; todayPopup_135=true; Bigkinds=A4A318D3206829ECC61A8A5137552990.tomcat1; _gat=1; _ga_QWY27BS8JM=GS2.1.s1771718330$o1$g1$t1771720572$j54$l0$h0; _ga=GA1.1.1361116665.1771718329"
+COOKIE_STRING = "_gid=GA1.3.316232199.1772088965; todayPopup_135=true; Bigkinds=B28600315AC78CD76983A8D48CE5AFA0.tomcat1; NCPVPCLBTG=7e3126e4020ff3044fad9532a9c561180183efeb2cf78a256ad85bdee9bd72b6; pageType=agree; bandisnclgnso=af555ca9d68aa89e74bb4510149195958a0a6971a0a02efc84a4bd6ea1b8746d892e30910ea51079a58e92beb85d113fc19e49e16792c329cfa29ba52cfc6050; _ga=GA1.1.1500191870.1772088965; _gat=1; _ga_QWY27BS8JM=GS2.1.s1772098426$o2$g1$t1772100461$j60$l0$h0"
 DOWNLOAD_DIR = Path("data/raw/bigkinds")
 
 START_YEAR = 2011

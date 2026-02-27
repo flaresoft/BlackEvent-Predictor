@@ -59,6 +59,7 @@ tagging:
   threshold_max: 0.8           # 캘리브레이션 탐색 종료값
   threshold_step: 0.05         # 캘리브레이션 탐색 단위
   default_threshold: 0.5       # 캘리브레이션 샘플이 없을 때 기본 threshold
+  sub_chunk_size: 200000       # sub-chunk 크기 (기본 50,000 → 200,000)
   use_per_property_threshold: true  # true: 성질별 최적 threshold 사용, false: 글로벌 threshold만 사용
 
 # Module 5: 패턴 분석
