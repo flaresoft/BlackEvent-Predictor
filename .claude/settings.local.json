@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(head:*)",
+      "Bash(ls:*)",
+      "Bash(cd /c/work/BlackEvent-Predictor && python -m src.module4_tagging.run 2>&1)",
+      "Bash(nvidia-smi:*)",
+      "Bash(pip install:*)",
+      "Bash(tail:*)",
+      "Bash(cd /c/work/BlackEvent-Predictor && python -m src.module5_analysis.run 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && python -m src.module6_scoring.run 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && python -m src.module7_validation.run 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && python -m src.module7_validation.lead_time_test 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && python -c \"\nimport pyarrow.parquet as pq\nimport pandas as pd\n\npf = pq.ParquetFile\\('data/processed/corpus_tagged.parquet'\\)\n# Read last row group to find max date\nlast_rg = pf.read_row_group\\(pf.metadata.num_row_groups - 1, columns=['date']\\)\ndf = last_rg.to_pandas\\(\\)\ndf['date'] = pd.to_datetime\\(df['date']\\)\nprint\\(f'Last RG max date: {df[\\\\\"date\\\\\"].max\\(\\)}'\\)\nprint\\(f'Last RG min date: {df[\\\\\"date\\\\\"].min\\(\\)}'\\)\nprint\\(f'Last RG rows: {len\\(df\\)}'\\)\n\" 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && python -X utf8 -m src.daily_scorer.run 2>&1)",
+      "Bash(schtasks:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(python3:*)",
+      "Bash(cd /c/work/BlackEvent-Predictor && python -X utf8 -m src.daily_pipeline.run --score-only 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && python -c \"import streamlit; print\\('streamlit', streamlit.__version__\\)\" 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && python -c \"\nimport sys\nsys.path.insert\\(0, '.'\\)\n\n# Test basic imports for each page\nimport streamlit\nprint\\('streamlit OK:', streamlit.__version__\\)\n\nimport pandas\nprint\\('pandas OK:', pandas.__version__\\)\n\nimport plotly\nprint\\('plotly OK:', plotly.__version__\\)\n\n# Test data loading\nimport pandas as pd\ndf = pd.read_csv\\('data/outputs/daily_scores.csv'\\)\nprint\\('daily_scores.csv:', len\\(df\\), 'rows'\\)\nprint\\('Latest score:', df.iloc[-1]['risk_score']\\)\n\nrisk_df = pd.read_csv\\('data/outputs/risk_scores.csv'\\)\nprint\\('risk_scores.csv:', len\\(risk_df\\), 'rows'\\)\n\nsig_df = pd.read_csv\\('data/outputs/significant_properties.csv'\\)\nprint\\('significant_properties.csv:', len\\(sig_df\\), 'rows'\\)\n\nlead_df = pd.read_csv\\('data/outputs/lead_time_analysis.csv'\\)\nprint\\('lead_time_analysis.csv:', len\\(lead_df\\), 'rows'\\)\n\nprint\\(\\)\nprint\\('All imports and data loads OK!'\\)\n\" 2>&1)",
+      "Bash(python:*)",
+      "Bash(find /c/work/BlackEvent-Predictor -name \"*.py\" -type f | xargs grep -l \"is_weekend\\\\|is_holiday\\\\|business_day\" 2>/dev/null)",
+      "mcp__ide__getDiagnostics",
+      "Bash(cd /c/work/BlackEvent-Predictor && git push origin master 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && git filter-branch --tree-filter '\nif [ -f .env.example ]; then\n  cat > .env.example << \"PLACEHOLDER\"\n# Anthropic Claude API\nANTHROPIC_API_KEY=sk-ant-xxxxx\n\n# BigKinds \\(빅카인즈\\)\n# API 미제공 — bigkinds.or.kr에서 직접 검색·다운로드 후\n# data/raw/bigkinds/ 폴더에 .xlsx 또는 .csv 파일을 넣어주세요.\n\n# Naver News API\nNAVER_CLIENT_ID=your_client_id\nNAVER_CLIENT_SECRET=your_client_secret\nPLACEHOLDER\nfi\n' --all 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && git stash && FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch --tree-filter '\nif [ -f .env.example ]; then\n  cat > .env.example << \"PLACEHOLDER\"\n# Anthropic Claude API\nANTHROPIC_API_KEY=sk-ant-xxxxx\n\n# BigKinds \\(빅카인즈\\)\n# API 미제공 — bigkinds.or.kr에서 직접 검색·다운로드 후\n# data/raw/bigkinds/ 폴더에 .xlsx 또는 .csv 파일을 넣어주세요.\n\n# Naver News API\nNAVER_CLIENT_ID=your_client_id\nNAVER_CLIENT_SECRET=your_client_secret\nPLACEHOLDER\nfi\n' --all 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && git stash pop 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && git stash && FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch -f --tree-filter 'if [ -f .env.example ]; then sed -i \"s/sk-ant-api03-[A-Za-z0-9_-]*/sk-ant-xxxxx/g\" .env.example; sed -i \"s/mANVP8wtuzworvcEVcio/your_client_id/g\" .env.example; sed -i \"s/OotP6bJmo8/your_client_secret/g\" .env.example; fi' -- --all 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && git for-each-ref --format='delete %\\(refname\\)' refs/original/ | git update-ref --stdin && git reflog expire --expire=now --all && git gc --prune=now 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && git push --force origin master 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && git add data/processed/black_events.csv data/processed/control_dates.csv .gitignore 2>&1)",
+      "Bash(cd /c/work/BlackEvent-Predictor && git commit -m \"$\\(cat <<'EOF'\n공개 준비: README 추가, 데이터 정리\n\n- README.md: 프로젝트 개요, 아키텍처, 성능, 설치/사용법\n- black_events.csv, control_dates.csv: gitignore 예외 추가하여 포함\n- bigkinds_downloader 통합 \\(연도별 4개 → 1개\\)\n- 내부 설계 문서 제거 \\(module3/4 instruction, Module8 spec\\)\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push origin master 2>&1)"
+    ]
+  }
+}
