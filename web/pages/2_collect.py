@@ -434,7 +434,7 @@ if st.button(
                     from openpyxl import load_workbook
                     wb = load_workbook(xlsx_path, read_only=True)
                     ws = wb.active
-                    article_count = (ws.max_row - 1) if ws.max_row and ws.max_row > 1 else 0
+                    article_count = sum(1 for _ in ws.rows) - 1  # 헤더 제외
                     wb.close()
                 except Exception:
                     article_count = None

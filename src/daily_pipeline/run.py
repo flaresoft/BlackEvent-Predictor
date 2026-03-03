@@ -404,41 +404,8 @@ def load_daily_aggregation_combined(
     date_min_ts = pd.Timestamp(date_min)
     date_max_ts = pd.Timestamp(date_max)
 
-    # ── daily 파일들 먼저 (작아서 빠름) ──
-    daily_dates_covered = set()
-    if daily_dir.exists():
-        for fp in sorted(daily_dir.glob("*.parquet")):
-            try:
-                tbl = pq.read_table(fp)
-                chunk = tbl.to_pandas()
-                del tbl
-            except Exception:
-                continue
-
-            chunk["date"] = pd.to_datetime(chunk["date"])
-            mask = (chunk["date"] >= date_min_ts) & (chunk["date"] <= date_max_ts)
-            chunk = chunk[mask]
-
-            for date_val, props in zip(chunk["date"].values, chunk["properties"].values):
-                if isinstance(props, np.ndarray):
-                    props_list = props.tolist()
-                elif isinstance(props, str):
-                    props_list = json.loads(props)
-                elif isinstance(props, list):
-                    props_list = props
-                else:
-                    continue
-                daily_article_count[date_val] += 1
-                total_articles += 1
-                daily_dates_covered.add(pd.Timestamp(date_val).strftime("%Y-%m-%d"))
-                for prop in props_list:
-                    daily[date_val][prop] += 1
-
-            del chunk
-
-    logger.info(f"Daily 파일: {len(daily_dates_covered)}일 로드")
-
-    # ── 메인 코퍼스 (daily에 없는 날짜 보충) ──
+    # ── 메인 코퍼스 먼저 (기준 데이터) ──
+    corpus_dates_covered = set()
     corpus_path = processed_path / "corpus_tagged.parquet"
     if corpus_path.exists():
         pf = pq.ParquetFile(corpus_path)
@@ -453,10 +420,46 @@ def load_daily_aggregation_combined(
             mask = (chunk["date"] >= date_min_ts) & (chunk["date"] <= date_max_ts)
             chunk = chunk[mask]
 
-            # daily에서 이미 커버한 날짜는 스킵
-            if daily_dates_covered:
+            for date_val, props in zip(chunk["date"].values, chunk["properties"].values):
+                if isinstance(props, np.ndarray):
+                    props_list = props.tolist()
+                elif isinstance(props, str):
+                    props_list = json.loads(props)
+                elif isinstance(props, list):
+                    props_list = props
+                else:
+                    continue
+                daily_article_count[date_val] += 1
+                total_articles += 1
+                corpus_dates_covered.add(pd.Timestamp(date_val).strftime("%Y-%m-%d"))
+                for prop in props_list:
+                    daily[date_val][prop] += 1
+
+            del chunk
+            if (rg_idx + 1) % 50 == 0 or rg_idx == num_rg - 1:
+                logger.info(f"  메인 코퍼스: RG {rg_idx+1}/{num_rg}")
+
+    logger.info(f"메인 코퍼스: {len(corpus_dates_covered)}일 로드")
+
+    # ── daily 파일 (메인 코퍼스에 없는 날짜만 보충) ──
+    daily_dates_added = set()
+    if daily_dir.exists():
+        for fp in sorted(daily_dir.glob("*.parquet")):
+            try:
+                tbl = pq.read_table(fp)
+                chunk = tbl.to_pandas()
+                del tbl
+            except Exception:
+                continue
+
+            chunk["date"] = pd.to_datetime(chunk["date"])
+            mask = (chunk["date"] >= date_min_ts) & (chunk["date"] <= date_max_ts)
+            chunk = chunk[mask]
+
+            # 메인 코퍼스에 이미 있는 날짜는 스킵
+            if corpus_dates_covered:
                 chunk_dates = chunk["date"].dt.strftime("%Y-%m-%d")
-                skip_mask = chunk_dates.isin(daily_dates_covered)
+                skip_mask = chunk_dates.isin(corpus_dates_covered)
                 chunk = chunk[~skip_mask]
 
             for date_val, props in zip(chunk["date"].values, chunk["properties"].values):
@@ -470,12 +473,13 @@ def load_daily_aggregation_combined(
                     continue
                 daily_article_count[date_val] += 1
                 total_articles += 1
+                daily_dates_added.add(pd.Timestamp(date_val).strftime("%Y-%m-%d"))
                 for prop in props_list:
                     daily[date_val][prop] += 1
 
             del chunk
-            if (rg_idx + 1) % 50 == 0 or rg_idx == num_rg - 1:
-                logger.info(f"  메인 코퍼스: RG {rg_idx+1}/{num_rg}")
+
+    logger.info(f"Daily 보충: {len(daily_dates_added)}일 추가")
 
     sorted_dates = sorted(daily.keys())
     dates_arr = np.array(sorted_dates, dtype="datetime64[ns]")
