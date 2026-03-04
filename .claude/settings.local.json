@@ -31,7 +31,14 @@
       "Bash(cd /c/work/BlackEvent-Predictor && git for-each-ref --format='delete %\\(refname\\)' refs/original/ | git update-ref --stdin && git reflog expire --expire=now --all && git gc --prune=now 2>&1)",
       "Bash(cd /c/work/BlackEvent-Predictor && git push --force origin master 2>&1)",
       "Bash(cd /c/work/BlackEvent-Predictor && git add data/processed/black_events.csv data/processed/control_dates.csv .gitignore 2>&1)",
-      "Bash(cd /c/work/BlackEvent-Predictor && git commit -m \"$\\(cat <<'EOF'\n공개 준비: README 추가, 데이터 정리\n\n- README.md: 프로젝트 개요, 아키텍처, 성능, 설치/사용법\n- black_events.csv, control_dates.csv: gitignore 예외 추가하여 포함\n- bigkinds_downloader 통합 \\(연도별 4개 → 1개\\)\n- 내부 설계 문서 제거 \\(module3/4 instruction, Module8 spec\\)\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push origin master 2>&1)"
+      "Bash(cd /c/work/BlackEvent-Predictor && git commit -m \"$\\(cat <<'EOF'\n공개 준비: README 추가, 데이터 정리\n\n- README.md: 프로젝트 개요, 아키텍처, 성능, 설치/사용법\n- black_events.csv, control_dates.csv: gitignore 예외 추가하여 포함\n- bigkinds_downloader 통합 \\(연도별 4개 → 1개\\)\n- 내부 설계 문서 제거 \\(module3/4 instruction, Module8 spec\\)\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push origin master 2>&1)",
+      "Bash(sort -t',' -k7 -rn)",
+      "Bash(rm:*)",
+      "Bash(iconv:*)",
+      "Bash(sed 's/\"\"representative_tag\"\": \"\"//')",
+      "Bash(sed 's/\"\"$//')",
+      "WebSearch",
+      "WebFetch(domain:www.seoul.co.kr)"
     ]
   }
 }

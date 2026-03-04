@@ -311,9 +311,11 @@ def process_and_tag(xlsx_path: Path, daily_dir: Path, config: dict) -> Path | No
     if "분석제외 여부" in df.columns:
         df = df[df["분석제외 여부"].isna()].copy()
 
-    # 중복 제거
-    if "article_id" in df.columns:
-        df = df.drop_duplicates(subset=["article_id"])
+    # 중복 제거 (BigKinds 일일 다운로드의 article_id는 기사별 고유가 아닐 수 있음)
+    before_dedup = len(df)
+    df = df.drop_duplicates(subset=["title", "date"])
+    if before_dedup != len(df):
+        logger.info(f"중복 제거: {before_dedup:,} → {len(df):,}건 (-{before_dedup - len(df):,})")
 
     logger.info(f"전처리 완료: {len(df):,}건")
 
@@ -531,14 +533,23 @@ def score(
         processed_path, daily_dir, date_min, date_max
     )
 
-    # 윈도우별 빈도
+    # 윈도우별 빈도 (coverage 보정 포함)
     unique_windows = set(optimal_windows.values())
     window_freqs: dict[int, dict] = {}
     window_articles: dict[int, int] = {}
     for w in unique_windows:
-        freq_map, n_art = compute_window_frequency(
+        freq_map, n_art, actual_days = compute_window_frequency(
             dates_arr, daily_counts, articles_per_day, ref_date, w
         )
+        if actual_days > 0 and actual_days < w:
+            coverage = actual_days / w
+            if coverage < 0.8:
+                logger.warning(
+                    f"  윈도우 {w}일 coverage 부족: {actual_days}/{w}일 "
+                    f"({coverage:.0%}) — 빈도 보정 적용"
+                )
+            freq_map = {k: int(v / coverage) for k, v in freq_map.items()}
+            n_art = int(n_art / coverage)
         window_freqs[w] = freq_map
         window_articles[w] = n_art
 
@@ -626,6 +637,51 @@ def score(
 
 
 # ──────────────────────────────────────────────
+# 태깅 누락 감지
+# ──────────────────────────────────────────────
+def check_untagged_files(
+    download_dir: Path, daily_dir: Path, processed_path: Path
+) -> list[str]:
+    """raw xlsx는 있지만 태깅(parquet)이 안 된 날짜를 찾는다.
+
+    Returns:
+        태깅 누락 날짜 리스트 (YYYY-MM-DD, 정렬됨)
+    """
+    # 1) raw xlsx에서 날짜 추출
+    raw_dates = set()
+    for fp in download_dir.glob("bigkinds_*.xlsx"):
+        m = re.search(r"(\d{4}-\d{2}-\d{2})", fp.stem)
+        if m:
+            raw_dates.add(m.group(1))
+
+    if not raw_dates:
+        return []
+
+    # 2) daily parquet에서 태깅된 날짜
+    tagged_dates = set()
+    if daily_dir.exists():
+        for fp in daily_dir.glob("*.parquet"):
+            tagged_dates.add(fp.stem)  # YYYY-MM-DD
+
+    # 3) 메인 코퍼스에 포함된 날짜
+    corpus_dates = set()
+    corpus_path = processed_path / "corpus_tagged.parquet"
+    if corpus_path.exists():
+        pf = pq.ParquetFile(corpus_path)
+        # 마지막 몇 RG만 확인 (최신 데이터가 끝에 있으므로)
+        num_rg = pf.metadata.num_row_groups
+        for rg_idx in range(max(0, num_rg - 20), num_rg):
+            tbl = pf.read_row_group(rg_idx, columns=["date"])
+            dates = pd.to_datetime(tbl.to_pandas()["date"])
+            corpus_dates.update(dates.dt.strftime("%Y-%m-%d").unique())
+            del tbl
+
+    # 4) 누락 = raw에 있지만 tagged에도 corpus에도 없는 날짜
+    untagged = sorted(raw_dates - tagged_dates - corpus_dates)
+    return untagged
+
+
+# ──────────────────────────────────────────────
 # 메인 파이프라인
 # ──────────────────────────────────────────────
 def run(target_date: str = None, score_only: bool = False):
@@ -655,6 +711,19 @@ def run(target_date: str = None, score_only: bool = False):
             process_and_tag(xlsx_path, daily_dir, config)
         else:
             logger.info("새 뉴스 없음, 태깅 스킵")
+
+    # 태깅 누락 체크
+    untagged = check_untagged_files(download_dir, daily_dir, processed_path)
+    if untagged:
+        logger.warning(
+            f"태깅 누락 {len(untagged)}일 발견: {untagged[0]} ~ {untagged[-1]}"
+        )
+        for d in untagged:
+            logger.warning(f"  미태깅: {d} (raw xlsx 존재, parquet 없음)")
+        logger.warning(
+            "태깅 누락 데이터가 있으면 스코어링 정확도가 떨어집니다. "
+            "'--date <날짜>' 옵션 없이 실행하면 자동 태깅됩니다."
+        )
 
     # Step 3: 스코어링
     logger.info("--- Step 3: 스코어링 ---")

@@ -90,12 +90,13 @@ def compute_window_frequency(
     articles_per_day: list[int],
     ref_date: pd.Timestamp,
     window_days: int,
-) -> tuple[dict[str, int], int]:
+) -> tuple[dict[str, int], int, int]:
     """단일 기준일의 윈도우 내 성질 빈도와 총 기사 수를 계산한다.
 
     Returns:
         freq_map: {property_id: count}
         total_articles: 윈도우 내 총 기사 수
+        actual_days: 윈도우 내 실제 데이터 존재 일수
     """
     start = ref_date - pd.Timedelta(days=window_days)
     end = ref_date - pd.Timedelta(days=1)
@@ -113,7 +114,8 @@ def compute_window_frequency(
         for prop, count in daily_counts[i].items():
             freq_map[prop] += count
 
-    return dict(freq_map), total
+    actual_days = i_end - i_start
+    return dict(freq_map), total, actual_days
 
 
 # ──────────────────────────────────────────────
@@ -384,9 +386,18 @@ def run() -> pd.DataFrame:
         window_freqs: dict[int, dict[str, int]] = {}
         window_articles: dict[int, int] = {}
         for w in unique_windows:
-            freq_map, n_articles = compute_window_frequency(
+            freq_map, n_articles, actual_days = compute_window_frequency(
                 dates_arr, daily_counts, articles_per_day, ref_date, w
             )
+            if actual_days > 0 and actual_days < w:
+                coverage = actual_days / w
+                if coverage < 0.8:
+                    logger.warning(
+                        f"  윈도우 {w}일 coverage 부족: {actual_days}/{w}일 "
+                        f"({coverage:.0%}) — 빈도 보정 적용"
+                    )
+                freq_map = {k: int(v / coverage) for k, v in freq_map.items()}
+                n_articles = int(n_articles / coverage)
             window_freqs[w] = freq_map
             window_articles[w] = n_articles
 
