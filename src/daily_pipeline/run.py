@@ -630,6 +630,7 @@ def score(
         combined = pd.concat([existing, new_row], ignore_index=True)
     else:
         combined = new_row
+    combined = combined.sort_values("date").reset_index(drop=True)
     combined.to_csv(csv_path, index=False)
     logger.info(f"저장: {csv_path}")
 

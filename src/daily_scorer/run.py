@@ -189,6 +189,7 @@ def run(target_date: str = None) -> dict:
     else:
         combined = new_row
 
+    combined = combined.sort_values("date").reset_index(drop=True)
     combined.to_csv(csv_path, index=False)
     logger.info(f"저장: {csv_path} ({len(combined)}건)")
 

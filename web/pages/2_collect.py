@@ -206,14 +206,58 @@ def _extract_chrome_cookies(domain: str = "bigkinds.or.kr") -> tuple[str, list[s
 
 
 def _scan_collected_dates(download_dir: Path) -> set[str]:
-    """bigkinds_YYYY-MM-DD_*.xlsx 파일에서 수집된 날짜 추출"""
+    """실제 데이터가 존재하는 날짜를 모든 소스에서 추출한다.
+
+    확인 소스:
+    1. bigkinds_*.xlsx (raw 수집 파일)
+    2. corpus_daily/*.parquet (일별 태깅 파일)
+    3. corpus_tagged.parquet (메인 코퍼스)
+    4. daily_scores.csv (스코어링 완료)
+    """
     collected = set()
-    if not download_dir.exists():
-        return collected
-    for f in download_dir.glob("bigkinds_*.xlsx"):
-        match = re.search(r"bigkinds_(\d{4}-\d{2}-\d{2})_", f.name)
-        if match and f.stat().st_size > 1024:
-            collected.add(match.group(1))
+
+    # 1) raw xlsx
+    if download_dir.exists():
+        for f in download_dir.glob("bigkinds_*.xlsx"):
+            match = re.search(r"bigkinds_(\d{4}-\d{2}-\d{2})_", f.name)
+            if match and f.stat().st_size > 1024:
+                collected.add(match.group(1))
+
+    # 2) corpus_daily parquet
+    daily_dir = ROOT / "data" / "processed" / "corpus_daily"
+    if daily_dir.exists():
+        for f in daily_dir.glob("*.parquet"):
+            match = re.match(r"(\d{4}-\d{2}-\d{2})\.parquet", f.name)
+            if match:
+                collected.add(match.group(1))
+
+    # 3) corpus_tagged.parquet (캐싱 — 최초 1회만 로드)
+    if "_corpus_dates" not in st.session_state:
+        corpus_path = ROOT / "data" / "processed" / "corpus_tagged.parquet"
+        if corpus_path.exists():
+            try:
+                import pyarrow.parquet as pq
+                pf = pq.ParquetFile(corpus_path)
+                date_col = pf.read(columns=["date"]).to_pandas()
+                date_col["date"] = pd.to_datetime(date_col["date"])
+                st.session_state["_corpus_dates"] = set(
+                    date_col["date"].dt.strftime("%Y-%m-%d").unique()
+                )
+            except Exception:
+                st.session_state["_corpus_dates"] = set()
+        else:
+            st.session_state["_corpus_dates"] = set()
+    collected |= st.session_state["_corpus_dates"]
+
+    # 4) daily_scores.csv
+    scores_csv = ROOT / "data" / "outputs" / "daily_scores.csv"
+    if scores_csv.exists():
+        try:
+            scores_df = pd.read_csv(scores_csv, usecols=["date"])
+            collected |= set(scores_df["date"].tolist())
+        except Exception:
+            pass
+
     return collected
 
 
@@ -372,19 +416,46 @@ collected_dates = _scan_collected_dates(DOWNLOAD_DIR)
 missing_dates = [dt for dt in all_dates if dt not in collected_dates]
 existing_dates = [dt for dt in all_dates if dt in collected_dates]
 
-col_m1, col_m2, col_m3 = st.columns(3)
+# 스코어링 현황 확인
+_scores_csv = ROOT / "data" / "outputs" / "daily_scores.csv"
+_scored_dates = set()
+if _scores_csv.exists():
+    try:
+        _scored_dates = set(pd.read_csv(_scores_csv, usecols=["date"])["date"].tolist())
+    except Exception:
+        pass
+unscored_dates = [dt for dt in existing_dates if dt not in _scored_dates]
+
+# xlsx 없지만 코퍼스에 있는 날짜 구분
+_xlsx_dates = set()
+if DOWNLOAD_DIR.exists():
+    for f in DOWNLOAD_DIR.glob("bigkinds_*.xlsx"):
+        match = re.search(r"bigkinds_(\d{4}-\d{2}-\d{2})_", f.name)
+        if match and f.stat().st_size > 1024:
+            _xlsx_dates.add(match.group(1))
+corpus_only_dates = [dt for dt in existing_dates if dt not in _xlsx_dates]
+
+col_m1, col_m2, col_m3, col_m4 = st.columns(4)
 with col_m1:
     st.metric("전체", f"{len(all_dates)}일")
 with col_m2:
-    st.metric("수집 완료", f"{len(existing_dates)}일")
+    st.metric("데이터 있음", f"{len(existing_dates)}일")
 with col_m3:
     st.metric("미수집", f"{len(missing_dates)}일")
+with col_m4:
+    st.metric("미스코어링", f"{len(unscored_dates)}일")
 
 if missing_dates:
     with st.expander(f"미수집 날짜 ({len(missing_dates)}일)"):
         st.write(", ".join(missing_dates))
+elif corpus_only_dates:
+    st.info(f"선택 범위의 모든 날짜에 데이터가 있습니다. (코퍼스 전용: {len(corpus_only_dates)}일)")
 else:
     st.info("선택한 범위의 모든 날짜가 이미 수집되었습니다.")
+
+if unscored_dates:
+    with st.expander(f"미스코어링 날짜 ({len(unscored_dates)}일)"):
+        st.write(", ".join(unscored_dates))
 
 # ── 빠진 날짜 자동 채우기 ──
 if st.button(
