@@ -231,18 +231,29 @@ def _scan_collected_dates(download_dir: Path) -> set[str]:
             if match:
                 collected.add(match.group(1))
 
-    # 3) corpus_tagged.parquet (캐싱 — 최초 1회만 로드)
+    # 3) corpus_tagged.parquet — row group statistics로 날짜 범위만 추출 (즉시)
     if "_corpus_dates" not in st.session_state:
         corpus_path = ROOT / "data" / "processed" / "corpus_tagged.parquet"
         if corpus_path.exists():
             try:
                 import pyarrow.parquet as pq
+                from datetime import date as _date
                 pf = pq.ParquetFile(corpus_path)
-                date_col = pf.read(columns=["date"]).to_pandas()
-                date_col["date"] = pd.to_datetime(date_col["date"])
-                st.session_state["_corpus_dates"] = set(
-                    date_col["date"].dt.strftime("%Y-%m-%d").unique()
+                date_col_idx = next(
+                    i for i, n in enumerate(pf.schema_arrow.names) if n == "date"
                 )
+                first_stats = pf.metadata.row_group(0).column(date_col_idx).statistics
+                last_stats = pf.metadata.row_group(
+                    pf.metadata.num_row_groups - 1
+                ).column(date_col_idx).statistics
+                corpus_min = first_stats.min
+                corpus_max = last_stats.max
+                corpus_dates = set()
+                d = corpus_min
+                while d <= corpus_max:
+                    corpus_dates.add(d.isoformat())
+                    d += timedelta(days=1)
+                st.session_state["_corpus_dates"] = corpus_dates
             except Exception:
                 st.session_state["_corpus_dates"] = set()
         else:
