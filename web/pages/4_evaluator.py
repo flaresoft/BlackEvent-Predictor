@@ -316,7 +316,7 @@ def call_claude(messages: list, system: str, api_key: str) -> tuple[str, list[st
         (응답 텍스트, 도구 사용 로그 리스트)
     """
     import anthropic
-    client = anthropic.Anthropic(api_key=api_key)
+    client = anthropic.Anthropic(api_key=api_key, max_retries=3)
     tool_logs = []
 
     all_tools = EVALUATOR_TOOLS + [
