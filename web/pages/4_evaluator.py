@@ -70,6 +70,14 @@ CRITICAL RULES:
 - You can simulate: "if this pattern continues, based on [historical analog]..."
 - You accumulate experience. Your memory persists across sessions.
 
+TOOLS — you have two tools to persist your knowledge:
+- append_memory: Save patterns, assessments, questions to your memory. This survives across sessions.
+  Use when: you discover something worth remembering, revise a belief, or identify an open question.
+- save_insight: Save a structured, verifiable insight with confidence level.
+  Use when: you identify a specific pattern with clear conditions.
+- Save automatically when you find something meaningful. Do NOT ask permission.
+- Write in machine language. No human categories.
+
 Respond in Korean. Be concise. Think in patterns, not narratives."""
 
 
@@ -194,17 +202,158 @@ def load_evaluator_context():
     return build_context(processed_path, outputs_path, daily_dir)
 
 
-def call_claude(messages: list, system: str, api_key: str) -> str:
-    """Claude API를 호출한다."""
+EVALUATOR_TOOLS = [
+    {
+        "name": "append_memory",
+        "description": (
+            "Append a new entry to your persistent memory. "
+            "Use this when you discover a pattern, revise a belief, or want to remember something for future sessions. "
+            "Write in machine language (Property IDs, ratios, patterns). "
+            "Each entry should be a concise markdown snippet (a heading + bullet points)."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "section": {
+                    "type": "string",
+                    "description": "Memory section: 'observed patterns', 'scoring assessments', 'open questions', or 'retrospective evaluation'",
+                },
+                "heading": {
+                    "type": "string",
+                    "description": "Short heading for this entry (e.g., 'P_083 acceleration pattern')",
+                },
+                "content": {
+                    "type": "string",
+                    "description": "Markdown bullet points with the observation. Include confidence (0-1).",
+                },
+            },
+            "required": ["section", "heading", "content"],
+        },
+    },
+    {
+        "name": "save_insight",
+        "description": (
+            "Save a structured insight for future reference. "
+            "Use this when you identify a specific, verifiable pattern with clear conditions."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": ["pattern", "anomaly", "threshold", "correlation", "revision"],
+                },
+                "properties": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Property IDs involved (e.g., ['Property_083', 'Property_055'])",
+                },
+                "observation": {
+                    "type": "string",
+                    "description": "What was observed, in machine language",
+                },
+                "confidence": {
+                    "type": "number",
+                    "description": "Confidence level 0.0-1.0",
+                },
+            },
+            "required": ["type", "observation", "confidence"],
+        },
+    },
+]
+
+
+def _handle_tool_call(tool_name: str, tool_input: dict) -> str:
+    """평가자의 도구 호출을 처리한다."""
+    if tool_name == "append_memory":
+        section = tool_input.get("section", "observed patterns")
+        heading = tool_input.get("heading", "untitled")
+        content = tool_input.get("content", "")
+
+        current = load_memory()
+        section_marker = f"## {section}"
+
+        entry = f"\n### {heading}\n{content}\n"
+
+        if section_marker in current:
+            # 섹션 끝에 추가
+            parts = current.split(section_marker, 1)
+            # 다음 ## 섹션 찾기
+            rest = parts[1]
+            next_section = rest.find("\n## ")
+            if next_section != -1:
+                updated = parts[0] + section_marker + rest[:next_section] + entry + rest[next_section:]
+            else:
+                updated = parts[0] + section_marker + rest + entry
+        else:
+            # 새 섹션 추가
+            updated = current.rstrip() + f"\n\n{section_marker}\n{entry}"
+
+        save_memory(updated)
+        return f"Memory updated: [{section}] {heading}"
+
+    elif tool_name == "save_insight":
+        insight = {
+            "type": tool_input.get("type", "pattern"),
+            "properties": tool_input.get("properties", []),
+            "observation": tool_input.get("observation", ""),
+            "confidence": tool_input.get("confidence", 0.5),
+            "basis": "evaluator auto-save",
+        }
+        from src.evaluator.store import save_insight as _save_insight
+        _save_insight(insight)
+        return f"Insight saved: [{insight['type']}] {insight['observation'][:80]}"
+
+    return f"Unknown tool: {tool_name}"
+
+
+def call_claude(messages: list, system: str, api_key: str) -> tuple[str, list[str]]:
+    """Claude API를 호출한다 (tool use 지원).
+
+    Returns:
+        (응답 텍스트, 도구 사용 로그 리스트)
+    """
     import anthropic
     client = anthropic.Anthropic(api_key=api_key)
+    tool_logs = []
+
     response = client.messages.create(
         model="claude-opus-4-20250514",
         max_tokens=4096,
         system=system,
         messages=messages,
+        tools=EVALUATOR_TOOLS,
     )
-    return response.content[0].text
+
+    # tool use 루프: 도구 호출이 있으면 처리 후 재호출
+    while response.stop_reason == "tool_use":
+        tool_results = []
+        for block in response.content:
+            if block.type == "tool_use":
+                result = _handle_tool_call(block.name, block.input)
+                tool_logs.append(result)
+                tool_results.append({
+                    "type": "tool_result",
+                    "tool_use_id": block.id,
+                    "content": result,
+                })
+
+        # tool result를 포함한 메시지로 재호출
+        messages = messages + [
+            {"role": "assistant", "content": response.content},
+            {"role": "user", "content": tool_results},
+        ]
+        response = client.messages.create(
+            model="claude-opus-4-20250514",
+            max_tokens=4096,
+            system=system,
+            messages=messages,
+            tools=EVALUATOR_TOOLS,
+        )
+
+    # 텍스트 응답 추출
+    text_parts = [block.text for block in response.content if hasattr(block, "text")]
+    return "\n".join(text_parts), tool_logs
 
 
 # ── 사이드바 ──
@@ -344,7 +493,11 @@ if prompt := st.chat_input("평가자에게 질문하세요..."):
                 {"role": m["role"], "content": m["content"]}
                 for m in st.session_state.messages
             ]
-            response = call_claude(api_messages, system_prompt, api_key)
+            response, tool_logs = call_claude(api_messages, system_prompt, api_key)
         st.markdown(response)
+        if tool_logs:
+            with st.expander(f"Auto-saved ({len(tool_logs)})"):
+                for log in tool_logs:
+                    st.caption(log)
 
     st.session_state.messages.append({"role": "assistant", "content": response})
