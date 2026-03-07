@@ -423,11 +423,31 @@ while d <= end_date:
     all_dates.append(d.strftime("%Y-%m-%d"))
     d += timedelta(days=1)
 
-collected_dates = _scan_collected_dates(DOWNLOAD_DIR)
-missing_dates = [dt for dt in all_dates if dt not in collected_dates]
-existing_dates = [dt for dt in all_dates if dt in collected_dates]
+# ── 통합 날짜 현황 (모든 섹션에서 공유) ──
 
-# 스코어링 현황 확인
+# xlsx 파일 존재 여부
+_xlsx_dates = set()
+if DOWNLOAD_DIR.exists():
+    for f in DOWNLOAD_DIR.glob("bigkinds_*.xlsx"):
+        match = re.search(r"bigkinds_(\d{4}-\d{2}-\d{2})_", f.name)
+        if match and f.stat().st_size > 1024:
+            _xlsx_dates.add(match.group(1))
+
+# corpus_daily parquet 존재 여부
+_daily_dir = ROOT / "data" / "processed" / "corpus_daily"
+_tagged_dates = set()
+if _daily_dir.exists():
+    for _f in _daily_dir.glob("*.parquet"):
+        _m = re.match(r"(\d{4}-\d{2}-\d{2})\.parquet", _f.name)
+        if _m:
+            _tagged_dates.add(_m.group(1))
+
+# corpus_tagged.parquet 날짜 범위
+_corpus_max = ""
+if "_corpus_dates" in st.session_state and st.session_state["_corpus_dates"]:
+    _corpus_max = max(st.session_state["_corpus_dates"])
+
+# 스코어링 완료 여부
 _scores_csv = ROOT / "data" / "outputs" / "daily_scores.csv"
 _scored_dates = set()
 if _scores_csv.exists():
@@ -435,18 +455,29 @@ if _scores_csv.exists():
         _scored_dates = set(pd.read_csv(_scores_csv, usecols=["date"])["date"].tolist())
     except Exception:
         pass
-unscored_dates = [dt for dt in existing_dates if dt not in _scored_dates]
 
-# xlsx 없지만 코퍼스에 있는 날짜 구분
-_xlsx_dates = set()
-if DOWNLOAD_DIR.exists():
-    for f in DOWNLOAD_DIR.glob("bigkinds_*.xlsx"):
-        match = re.search(r"bigkinds_(\d{4}-\d{2}-\d{2})_", f.name)
-        if match and f.stat().st_size > 1024:
-            _xlsx_dates.add(match.group(1))
-corpus_only_dates = [dt for dt in existing_dates if dt not in _xlsx_dates]
+# 날짜별 상태 판정 (통합 기준)
+# - "데이터 있음" = xlsx OR corpus_daily OR corpus_tagged 범위 내
+# - "태깅됨" = corpus_daily에 있음 OR corpus_tagged 범위 내
+# - "태깅 필요" = xlsx 있지만 태깅 안 됨 (corpus_daily에도 없고 corpus_tagged 범위 밖)
+# - "스코어링 가능" = 태깅됨 AND 스코어 없음
+collected_dates = _scan_collected_dates(DOWNLOAD_DIR)
+missing_dates = [dt for dt in all_dates if dt not in collected_dates]
+existing_dates = [dt for dt in all_dates if dt in collected_dates]
 
-col_m1, col_m2, col_m3, col_m4 = st.columns(4)
+_needs_tag = []  # xlsx 있고, 태깅 안 된 날짜
+_needs_score = []  # 태깅 됐지만 스코어 없는 날짜
+for dt in all_dates:
+    tagged = dt in _tagged_dates or (bool(_corpus_max) and dt <= _corpus_max)
+    has_xlsx = dt in _xlsx_dates
+    scored = dt in _scored_dates
+
+    if has_xlsx and not tagged:
+        _needs_tag.append(dt)
+    if tagged and not scored:
+        _needs_score.append(dt)
+
+col_m1, col_m2, col_m3, col_m4, col_m5 = st.columns(5)
 with col_m1:
     st.metric("전체", f"{len(all_dates)}일")
 with col_m2:
@@ -454,19 +485,21 @@ with col_m2:
 with col_m3:
     st.metric("미수집", f"{len(missing_dates)}일")
 with col_m4:
-    st.metric("미스코어링", f"{len(unscored_dates)}일")
+    st.metric("미태깅", f"{len(_needs_tag)}일")
+with col_m5:
+    st.metric("미스코어링", f"{len(_needs_score)}일")
 
 if missing_dates:
     with st.expander(f"미수집 날짜 ({len(missing_dates)}일)"):
         st.write(", ".join(missing_dates))
-elif corpus_only_dates:
-    st.info(f"선택 범위의 모든 날짜에 데이터가 있습니다. (코퍼스 전용: {len(corpus_only_dates)}일)")
-else:
-    st.info("선택한 범위의 모든 날짜가 이미 수집되었습니다.")
-
-if unscored_dates:
-    with st.expander(f"미스코어링 날짜 ({len(unscored_dates)}일)"):
-        st.write(", ".join(unscored_dates))
+if _needs_tag:
+    with st.expander(f"미태깅 날짜 ({len(_needs_tag)}일)"):
+        st.write(", ".join(_needs_tag))
+if _needs_score:
+    with st.expander(f"미스코어링 날짜 ({len(_needs_score)}일)"):
+        st.write(", ".join(_needs_score))
+if not missing_dates and not _needs_tag and not _needs_score:
+    st.info("선택 범위의 모든 날짜가 수집·태깅·스코어링 완료되었습니다.")
 
 # ── 빠진 날짜 자동 채우기 ──
 if st.button(
@@ -566,36 +599,9 @@ st.divider()
 # ── 3. 태깅 + 스코어링 ──
 st.subheader("태깅 + 스코어링")
 
-# 태깅/스코어링 대상 자동 감지
-_daily_dir = ROOT / "data" / "processed" / "corpus_daily"
-_tagged_dates = set()
-if _daily_dir.exists():
-    for _f in _daily_dir.glob("*.parquet"):
-        _m = re.match(r"(\d{4}-\d{2}-\d{2})\.parquet", _f.name)
-        if _m:
-            _tagged_dates.add(_m.group(1))
-
-# xlsx 있지만 태깅 안 된 날짜
-_untagged = sorted(d for d in _xlsx_dates if d not in _tagged_dates)
-# 태깅은 됐지만 스코어 안 된 날짜
-_tagged_unscored = sorted(d for d in _tagged_dates if d not in _scored_dates)
-
-col_status1, col_status2 = st.columns(2)
-with col_status1:
-    st.metric("미태깅 (xlsx 있음)", f"{len(_untagged)}일")
-with col_status2:
-    st.metric("미스코어링 (태깅 있음)", f"{len(_tagged_unscored)}일")
-
-if _untagged:
-    with st.expander(f"미태깅 날짜 ({len(_untagged)}일)"):
-        st.write(", ".join(_untagged))
-if _tagged_unscored:
-    with st.expander(f"미스코어링 날짜 ({len(_tagged_unscored)}일)"):
-        st.write(", ".join(_tagged_unscored))
-
 pipeline_mode = st.radio(
     "실행 모드",
-    ["일괄 처리 (미태깅+미스코어링 전체)", "날짜 지정", "스코어만 재계산 (태깅 스킵)"],
+    ["일괄 처리 (선택 범위 내 미처리 전체)", "날짜 지정", "스코어만 재계산"],
     horizontal=True,
     key="pipeline_mode",
 )
@@ -609,16 +615,16 @@ if pipeline_mode == "날짜 지정":
     )
 
 # 실행 버튼
-if pipeline_mode == "일괄 처리 (미태깅+미스코어링 전체)":
-    _total_work = len(_untagged) + len(_tagged_unscored)
-    btn_label = f"일괄 태깅 + 스코어링 ({_total_work}일)"
+if pipeline_mode == "일괄 처리 (선택 범위 내 미처리 전체)":
+    _total_work = len(_needs_tag) + len(_needs_score)
+    btn_label = f"일괄 태깅 + 스코어링 (태깅 {len(_needs_tag)}일 + 스코어 {len(_needs_score)}일)"
     btn_disabled = _total_work == 0
 elif pipeline_mode == "날짜 지정":
     btn_label = f"태깅 + 스코어링 실행 ({tag_date.strftime('%Y-%m-%d')})"
     btn_disabled = False
 else:
-    btn_label = "스코어만 재계산 (미스코어링 전체)"
-    btn_disabled = len(_tagged_unscored) == 0
+    btn_label = f"스코어만 재계산 ({len(_needs_score)}일)"
+    btn_disabled = len(_needs_score) == 0
 
 if st.button(btn_label, type="primary", disabled=btn_disabled, key="btn_tag_score"):
     log_container = st.empty()
@@ -633,17 +639,17 @@ if st.button(btn_label, type="primary", disabled=btn_disabled, key="btn_tag_scor
         outputs_path = get_path(config, "outputs")
         daily_dir = processed_path / "corpus_daily"
 
-        # 처리 대상 결정
-        if pipeline_mode == "일괄 처리 (미태깅+미스코어링 전체)":
-            tag_targets = _untagged[:]
-            score_targets = _tagged_unscored[:]
+        # 처리 대상 결정 (상단과 동일한 _needs_tag, _needs_score 사용)
+        if pipeline_mode == "일괄 처리 (선택 범위 내 미처리 전체)":
+            tag_targets = _needs_tag[:]
+            score_targets = _needs_score[:]
         elif pipeline_mode == "날짜 지정":
             ds = tag_date.strftime("%Y-%m-%d")
             tag_targets = [ds]
             score_targets = [ds]
         else:  # 스코어만
             tag_targets = []
-            score_targets = _tagged_unscored[:]
+            score_targets = _needs_score[:]
 
         total_steps = len(tag_targets) + len(score_targets)
         step = 0
@@ -704,7 +710,6 @@ if st.button(btn_label, type="primary", disabled=btn_disabled, key="btn_tag_scor
                     report_rows.append({"날짜": date_str, "태깅": "기존", "스코어": f"실패: {e}"})
 
         progress_bar.progress(1.0)
-        n_ok = sum(1 for r in report_rows if "완료" in str(r.get("태깅", "")) or "기존" in str(r.get("태깅", "")))
         log_container.success(f"완료! {len(report_rows)}일 처리")
 
         report_rows.sort(key=lambda r: r["날짜"])
