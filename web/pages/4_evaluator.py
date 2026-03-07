@@ -328,6 +328,8 @@ def call_claude(messages: list, system: str, api_key: str) -> tuple[str, list[st
     # tool use 루프: 도구 호출이 있으면 처리 후 재호출
     while response.stop_reason == "tool_use":
         tool_results = []
+        # content blocks를 plain dict로 변환 (pydantic 직렬화 문제 회피)
+        assistant_content = []
         for block in response.content:
             if block.type == "tool_use":
                 result = _handle_tool_call(block.name, block.input)
@@ -337,10 +339,20 @@ def call_claude(messages: list, system: str, api_key: str) -> tuple[str, list[st
                     "tool_use_id": block.id,
                     "content": result,
                 })
+                assistant_content.append({
+                    "type": "tool_use",
+                    "id": block.id,
+                    "name": block.name,
+                    "input": block.input,
+                })
+            elif block.type == "text":
+                assistant_content.append({
+                    "type": "text",
+                    "text": block.text,
+                })
 
-        # tool result를 포함한 메시지로 재호출
         messages = messages + [
-            {"role": "assistant", "content": response.content},
+            {"role": "assistant", "content": assistant_content},
             {"role": "user", "content": tool_results},
         ]
         response = client.messages.create(
