@@ -516,7 +516,23 @@ if prompt := st.chat_input("평가자에게 질문하세요..."):
                 {"role": m["role"], "content": m["content"]}
                 for m in st.session_state.messages
             ]
-            response, tool_logs = call_claude(api_messages, system_prompt, api_key)
+            try:
+                response, tool_logs = call_claude(api_messages, system_prompt, api_key)
+            except Exception as e:
+                err_msg = str(e)
+                if "overloaded" in err_msg.lower() or "529" in err_msg:
+                    response = "서버가 지금 혼잡합니다. 잠시 후 다시 시도해주세요."
+                elif "rate" in err_msg.lower() and "limit" in err_msg.lower():
+                    response = "API 호출 한도에 도달했습니다. 잠시 후 다시 시도해주세요."
+                elif "authentication" in err_msg.lower() or "401" in err_msg:
+                    response = "API 키가 유효하지 않습니다. .env 파일을 확인해주세요."
+                else:
+                    response = f"오류가 발생했습니다: {type(e).__name__}: {err_msg[:200]}"
+                tool_logs = []
+                st.warning(response)
+                st.session_state.messages.pop()  # 실패한 user 메시지 제거
+                st.stop()
+
         st.markdown(response)
         if tool_logs:
             with st.expander(f"Auto-saved ({len(tool_logs)})"):
