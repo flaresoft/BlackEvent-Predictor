@@ -327,7 +327,12 @@ def call_claude(messages: list, system: str, api_key: str) -> tuple[str, list[st
         },
     ]
 
-    response = client.messages.create(
+    def _stream_collect(**kwargs) -> anthropic.types.Message:
+        """streaming으로 호출하고 최종 Message 객체를 반환한다."""
+        with client.messages.stream(**kwargs) as stream:
+            return stream.get_final_message()
+
+    call_kwargs = dict(
         model="claude-opus-4-20250514",
         max_tokens=16384,
         system=system,
@@ -335,8 +340,9 @@ def call_claude(messages: list, system: str, api_key: str) -> tuple[str, list[st
         tools=all_tools,
     )
 
+    response = _stream_collect(**call_kwargs)
+
     # tool use 루프: 커스텀 도구 호출이 있으면 처리 후 재호출
-    # (web_search는 서버가 자동 처리하므로 여기서 안 잡힘)
     while response.stop_reason == "tool_use":
         tool_results = []
         assistant_content = []
@@ -365,13 +371,8 @@ def call_claude(messages: list, system: str, api_key: str) -> tuple[str, list[st
             {"role": "assistant", "content": assistant_content},
             {"role": "user", "content": tool_results},
         ]
-        response = client.messages.create(
-            model="claude-opus-4-20250514",
-            max_tokens=16384,
-            system=system,
-            messages=messages,
-            tools=all_tools,
-        )
+        call_kwargs["messages"] = messages
+        response = _stream_collect(**call_kwargs)
 
     # 텍스트 응답 추출
     text_parts = [block.text for block in response.content if hasattr(block, "text")]
