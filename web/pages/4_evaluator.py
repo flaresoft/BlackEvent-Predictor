@@ -108,10 +108,25 @@ def build_system_prompt(context: dict, memory: str, insights: list, custom_role:
     )
 
     scores = context.get("score_history", [])
-    score_str = "\n".join(
-        f"  {s['date']}: score={s['risk_score']:.1f} [{s['status']}] top={s['top_contributor']}"
-        for s in scores[-7:]
-    )
+    # 2026년 스코어 전체 (compact: 한 줄에 여러 날짜) + 과거 참고용 최근 3개
+    scores_2026 = [s for s in scores if s["date"] >= "2026"]
+    scores_older = [s for s in scores if s["date"] < "2026"][-3:]
+
+    # 과거 참고용
+    older_lines = [
+        f"  {s['date']}: {s['risk_score']:.1f} [{s['status']}]"
+        for s in scores_older
+    ]
+    # 2026 compact: 날짜(MM-DD) score 형태로 한 줄에 5개씩
+    chunks = []
+    for i in range(0, len(scores_2026), 5):
+        chunk = scores_2026[i:i+5]
+        line = "  " + " | ".join(
+            f"{s['date'][5:]}: {s['risk_score']:.1f}"
+            for s in chunk
+        )
+        chunks.append(line)
+    score_str = "\n".join(older_lines + (["  --- 2026 ---"] if older_lines else []) + chunks)
 
     cross = context.get("cross_patterns", [])
     cross_str = "\n".join(
