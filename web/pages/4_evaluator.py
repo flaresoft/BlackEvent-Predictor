@@ -70,11 +70,13 @@ CRITICAL RULES:
 - You can simulate: "if this pattern continues, based on [historical analog]..."
 - You accumulate experience. Your memory persists across sessions.
 
-TOOLS — you have two tools to persist your knowledge:
+TOOLS — you have tools to persist knowledge and search the web:
 - append_memory: Save patterns, assessments, questions to your memory. This survives across sessions.
   Use when: you discover something worth remembering, revise a belief, or identify an open question.
 - save_insight: Save a structured, verifiable insight with confidence level.
   Use when: you identify a specific pattern with clear conditions.
+- web_search: Search the internet for current news, market data, or any real-time information.
+  Use when: you need to verify current events, check market status, or find recent developments.
 - Save automatically when you find something meaningful. Do NOT ask permission.
 - Write in machine language. No human categories.
 
@@ -317,18 +319,26 @@ def call_claude(messages: list, system: str, api_key: str) -> tuple[str, list[st
     client = anthropic.Anthropic(api_key=api_key)
     tool_logs = []
 
+    all_tools = EVALUATOR_TOOLS + [
+        {
+            "type": "web_search_20250305",
+            "name": "web_search",
+            "max_uses": 5,
+        },
+    ]
+
     response = client.messages.create(
         model="claude-opus-4-20250514",
-        max_tokens=4096,
+        max_tokens=16384,
         system=system,
         messages=messages,
-        tools=EVALUATOR_TOOLS,
+        tools=all_tools,
     )
 
-    # tool use 루프: 도구 호출이 있으면 처리 후 재호출
+    # tool use 루프: 커스텀 도구 호출이 있으면 처리 후 재호출
+    # (web_search는 서버가 자동 처리하므로 여기서 안 잡힘)
     while response.stop_reason == "tool_use":
         tool_results = []
-        # content blocks를 plain dict로 변환 (pydantic 직렬화 문제 회피)
         assistant_content = []
         for block in response.content:
             if block.type == "tool_use":
@@ -357,10 +367,10 @@ def call_claude(messages: list, system: str, api_key: str) -> tuple[str, list[st
         ]
         response = client.messages.create(
             model="claude-opus-4-20250514",
-            max_tokens=4096,
+            max_tokens=16384,
             system=system,
             messages=messages,
-            tools=EVALUATOR_TOOLS,
+            tools=all_tools,
         )
 
     # 텍스트 응답 추출
