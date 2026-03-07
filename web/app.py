@@ -86,10 +86,12 @@ st.markdown("""
 """)
 
 st.subheader("페이지 안내")
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.markdown("**Dashboard**\n\n리스크 게이지, 성질 기여도, 일별 추이 차트")
 with col2:
     st.markdown("**Collect**\n\nBigKinds 쿠키 설정, 뉴스 수집·태깅·스코어링 실행")
 with col3:
     st.markdown("**History**\n\n과거 BlackEvent 분석, 모델 성능, Lead Time")
+with col4:
+    st.markdown("**Evaluator**\n\nLLM 대화형 평가자 — 태깅/스코어링 평가, 인사이트 축적")
