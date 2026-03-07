@@ -566,25 +566,61 @@ st.divider()
 # ── 3. 태깅 + 스코어링 ──
 st.subheader("태깅 + 스코어링")
 
-col_tag_date, col_tag_mode = st.columns(2)
-with col_tag_date:
+# 태깅/스코어링 대상 자동 감지
+_daily_dir = ROOT / "data" / "processed" / "corpus_daily"
+_tagged_dates = set()
+if _daily_dir.exists():
+    for _f in _daily_dir.glob("*.parquet"):
+        _m = re.match(r"(\d{4}-\d{2}-\d{2})\.parquet", _f.name)
+        if _m:
+            _tagged_dates.add(_m.group(1))
+
+# xlsx 있지만 태깅 안 된 날짜
+_untagged = sorted(d for d in _xlsx_dates if d not in _tagged_dates)
+# 태깅은 됐지만 스코어 안 된 날짜
+_tagged_unscored = sorted(d for d in _tagged_dates if d not in _scored_dates)
+
+col_status1, col_status2 = st.columns(2)
+with col_status1:
+    st.metric("미태깅 (xlsx 있음)", f"{len(_untagged)}일")
+with col_status2:
+    st.metric("미스코어링 (태깅 있음)", f"{len(_tagged_unscored)}일")
+
+if _untagged:
+    with st.expander(f"미태깅 날짜 ({len(_untagged)}일)"):
+        st.write(", ".join(_untagged))
+if _tagged_unscored:
+    with st.expander(f"미스코어링 날짜 ({len(_tagged_unscored)}일)"):
+        st.write(", ".join(_tagged_unscored))
+
+pipeline_mode = st.radio(
+    "실행 모드",
+    ["일괄 처리 (미태깅+미스코어링 전체)", "날짜 지정", "스코어만 재계산 (태깅 스킵)"],
+    horizontal=True,
+    key="pipeline_mode",
+)
+
+if pipeline_mode == "날짜 지정":
     tag_date = st.date_input(
         "처리 날짜",
         value=datetime.now().date() - timedelta(days=1),
         max_value=datetime.now().date(),
         key="tag_date",
     )
-with col_tag_mode:
-    score_only = st.checkbox("스코어만 재계산 (태깅 스킵)")
 
-if st.button("태깅 + 스코어링 실행", type="primary", key="btn_tag_score"):
-    date_str = tag_date.strftime("%Y-%m-%d")
-    xlsx_path = DOWNLOAD_DIR / f"bigkinds_{date_str}_{date_str}.xlsx"
+# 실행 버튼
+if pipeline_mode == "일괄 처리 (미태깅+미스코어링 전체)":
+    _total_work = len(_untagged) + len(_tagged_unscored)
+    btn_label = f"일괄 태깅 + 스코어링 ({_total_work}일)"
+    btn_disabled = _total_work == 0
+elif pipeline_mode == "날짜 지정":
+    btn_label = f"태깅 + 스코어링 실행 ({tag_date.strftime('%Y-%m-%d')})"
+    btn_disabled = False
+else:
+    btn_label = "스코어만 재계산 (미스코어링 전체)"
+    btn_disabled = len(_tagged_unscored) == 0
 
-    if not score_only and not xlsx_path.exists():
-        st.error(f"{date_str}의 수집 파일이 없습니다. 먼저 뉴스를 수집하세요.")
-        st.stop()
-
+if st.button(btn_label, type="primary", disabled=btn_disabled, key="btn_tag_score"):
     log_container = st.empty()
     progress_bar = st.progress(0)
 
@@ -596,51 +632,86 @@ if st.button("태깅 + 스코어링 실행", type="primary", key="btn_tag_score"
         processed_path = get_path(config, "processed_data")
         outputs_path = get_path(config, "outputs")
         daily_dir = processed_path / "corpus_daily"
-        ref_date = pd.Timestamp(date_str)
 
-        if not score_only:
-            with st.spinner(f"Step 1/2: {date_str} 임베딩 + 태깅 중 (GPU, 1-2분)..."):
-                log_container.info("임베딩 모델 로드 + 태깅 중...")
+        # 처리 대상 결정
+        if pipeline_mode == "일괄 처리 (미태깅+미스코어링 전체)":
+            tag_targets = _untagged[:]
+            score_targets = _tagged_unscored[:]
+        elif pipeline_mode == "날짜 지정":
+            ds = tag_date.strftime("%Y-%m-%d")
+            tag_targets = [ds]
+            score_targets = [ds]
+        else:  # 스코어만
+            tag_targets = []
+            score_targets = _tagged_unscored[:]
+
+        total_steps = len(tag_targets) + len(score_targets)
+        step = 0
+        report_rows = []
+
+        # ── 태깅 ──
+        for date_str in tag_targets:
+            step += 1
+            progress_bar.progress(step / max(total_steps, 1))
+            xlsx_path = DOWNLOAD_DIR / f"bigkinds_{date_str}_{date_str}.xlsx"
+
+            if not xlsx_path.exists():
+                report_rows.append({"날짜": date_str, "태깅": "- (xlsx 없음)", "스코어": "-"})
+                continue
+
+            log_container.info(f"태깅 중: {date_str} ({step}/{total_steps})")
+            try:
                 process_and_tag(xlsx_path, daily_dir, config)
-                progress_bar.progress(50)
-            log_container.info("태깅 완료!")
-        else:
-            progress_bar.progress(50)
+                report_rows.append({"날짜": date_str, "태깅": "완료", "스코어": "대기"})
+                # 태깅 완료 → 스코어 대상에도 추가
+                if date_str not in score_targets:
+                    score_targets.append(date_str)
+                    total_steps += 1
+            except Exception as e:
+                report_rows.append({"날짜": date_str, "태깅": f"실패: {e}", "스코어": "-"})
 
-        with st.spinner("Step 2/2: 리스크 스코어 산출 중..."):
-            import pyarrow.parquet as pq
+        # ── 스코어링 ──
+        score_targets = sorted(set(score_targets))
+        for date_str in score_targets:
+            step += 1
+            progress_bar.progress(step / max(total_steps, 1))
+            log_container.info(f"스코어링 중: {date_str} ({step}/{total_steps})")
 
-            if daily_dir.exists() and list(daily_dir.glob("*.parquet")):
-                latest_daily = sorted(daily_dir.glob("*.parquet"))[-1]
-                scoring_date = pd.Timestamp(latest_daily.stem)
-            else:
-                pf = pq.ParquetFile(processed_path / "corpus_tagged.parquet")
-                last_rg = pf.read_row_group(
-                    pf.metadata.num_row_groups - 1, columns=["date"]
-                )
-                last_df = last_rg.to_pandas()
-                last_df["date"] = pd.to_datetime(last_df["date"])
-                scoring_date = last_df["date"].max()
+            try:
+                scoring_date = pd.Timestamp(date_str)
+                result = score(processed_path, outputs_path, daily_dir, scoring_date, config)
+                rs = result["risk_score"]
+                st_label = result["status"]
+                # 기존 리포트 업데이트
+                updated = False
+                for row in report_rows:
+                    if row["날짜"] == date_str:
+                        row["스코어"] = f"{rs:.1f} ({st_label})"
+                        updated = True
+                        break
+                if not updated:
+                    report_rows.append({
+                        "날짜": date_str,
+                        "태깅": "기존",
+                        "스코어": f"{rs:.1f} ({st_label})",
+                    })
+            except Exception as e:
+                for row in report_rows:
+                    if row["날짜"] == date_str:
+                        row["스코어"] = f"실패: {e}"
+                        break
+                else:
+                    report_rows.append({"날짜": date_str, "태깅": "기존", "스코어": f"실패: {e}"})
 
-            log_container.info(f"스코어링 기준일: {scoring_date.strftime('%Y-%m-%d')}")
-            result = score(processed_path, outputs_path, daily_dir, scoring_date, config)
-            progress_bar.progress(100)
+        progress_bar.progress(1.0)
+        n_ok = sum(1 for r in report_rows if "완료" in str(r.get("태깅", "")) or "기존" in str(r.get("태깅", "")))
+        log_container.success(f"완료! {len(report_rows)}일 처리")
 
-        st.success("태깅 + 스코어링 완료!")
-        risk_score = result["risk_score"]
-        status = result["status"]
-
-        col_r1, col_r2 = st.columns(2)
-        with col_r1:
-            st.metric("Risk Score", f"{risk_score:.2f}/100")
-        with col_r2:
-            st.metric("Status", status)
-
-        if status == "WARNING":
-            st.warning(f"리스크 스코어 {risk_score:.2f} — WARNING!")
+        report_rows.sort(key=lambda r: r["날짜"])
+        st.dataframe(pd.DataFrame(report_rows), hide_index=True, use_container_width=True)
 
     except Exception as e:
-        progress_bar.progress(100)
+        progress_bar.progress(1.0)
         st.error(f"오류: {e}")
         import traceback
         st.code(traceback.format_exc())
