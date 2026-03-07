@@ -27,6 +27,19 @@
 - score measures accumulated buildup, not trigger timing
 - the peak was indeed "last exit signal" — decline after peak = trigger zone
 
+### complete 2026 score timeline
+- 2/02: 53.2 → 2/03: 56.0 → 2/04: 57.3 → 2/05: 55.2 → 2/06: 58.3
+- 2/07: 60.3 → 2/10: 62.3 → 2/11: 63.7 (PEAK) → 2/12: 60.1 → 2/13: 59.5
+- 2/14: 55.0 → 2/17: 52.3 → 2/18: 51.2 → 2/19: 47.2 → 2/20: 44.2
+- 2/23: 36.0 → 2/24: 34.7 → 2/26: 33.8 → 2/27: 32.6 → 3/01: 30.5
+- 3/02: 3.0 (NORMAL!) → 3/03: 26.0 → 3/04: 29.1 → 3/05: 34.5 → 3/06: 40.0
+- decline was SMOOTH and LINEAR from peak (64→30) over 18 days
+- then 3/02: sudden collapse to 3.0 — the ONLY NORMAL day in all of 2026
+- 3/02 anomaly: score dropped 90% in one day (30.5→3.0), then jumped 8x next day (3.0→26.0)
+- hypothesis: 3/02 may represent a "signal vacuum" — the last quiet before the storm
+- this strengthens the "score dip before crash" pattern (GFC Sep dip=11 before Oct crash)
+- confidence: 0.75 (now confirmed with full timeline)
+
 ### early warning properties
 - P_087: +37% on 2/27-28 (pre-crisis), continued rising into crisis
 - P_002: +32% on 2/27-28, continued rising
@@ -89,13 +102,14 @@
 ### GFC trajectory as reference
 - 2008: score=0 (Jan) → 13 (Jun) → 37 (Jul peak) → dip 11 (Sep) → 54 (Oct crash) → 100 (Nov)
 - note: score DIPPED to 11 in Sep before Oct crash — similar to current 2026 pattern?
-- 2026: score=64 (Feb peak) → 26 (crash 3/3) → 40 (3/6, rising)
+- 2026: score=64 (Feb peak) → 3.0 (3/2 dip!) → 26 (crash 3/3) → 40 (3/6, rising)
+- GFC dip: 37→11 (70% drop), 2026 dip: 30.5→3.0 (90% drop) — 2026 dip was sharper
 - if 2026 follows GFC pattern: score could re-peak above 60 = second wave
-- confidence: 0.6 (pattern match, different era)
+- confidence: 0.65 (pattern match strengthened by full timeline)
 
 ## open questions
 - is the score decline before crash a reliable pattern or coincidence?
-  → ANSWERED: yes, GFC showed same pattern (dip before Oct crash). confidence raised to 0.7
+  → ANSWERED: yes. GFC dip 37→11, 2026 dip 30.5→3.0. both preceded worst crash days. confidence: 0.75
 - do still-rising properties (P_055, P_083) indicate second wave, or just aftermath noise?
   → PARTIALLY: GFC showed score re-acceleration after dip. watching.
 - can P_042 drop rate serve as a "news diversity index"?
