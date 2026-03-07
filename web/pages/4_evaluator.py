@@ -140,6 +140,17 @@ def build_system_prompt(context: dict, memory: str, insights: list, custom_role:
         for i in recent_insights
     )
 
+    # 날짜별 sig density + 기사 수 (compact)
+    daily_stats = context.get("daily_stats", {})
+    daily_lines = []
+    for d in sorted(daily_stats.keys()):
+        s = daily_stats[d]
+        sig = s.get("sig_density", {})
+        daily_lines.append(
+            f"  {d[5:]}: {s['total_articles']:,}건 sig7={sig.get('sig7',0)}% sig15={sig.get('sig15',0)}%"
+        )
+    daily_str = "\n".join(daily_lines)
+
     role_block = custom_role if custom_role else "(no role defined)"
 
     dates = summary.get("dates_covered", ["?", "?"])
@@ -147,7 +158,10 @@ def build_system_prompt(context: dict, memory: str, insights: list, custom_role:
 
     return f"""{role_block}
 
-=== CURRENT DATA ({date_range}) ===
+=== CURRENT DATA ({date_range}, {len(dates)} days) ===
+
+Daily overview:
+{daily_str or '  (none)'}
 
 Rising properties:
 {rising_str or '  (none)'}
