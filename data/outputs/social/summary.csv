@@ -1,0 +1,13 @@
+risk_metric,social_indicator,best_lag,best_correlation,best_p_adjusted,significant
+risk_mean,suicide,7,0.4196,1.1161907733083185e-09,True
+risk_max,suicide,7,0.4209,9.60916048954969e-10,True
+warning_days,suicide,4,0.39,2.103306468942399e-08,True
+risk_mean,mental_disorder,2,0.147,0.3570466783637844,False
+risk_max,mental_disorder,2,0.1511,0.3037923106310455,False
+warning_days,mental_disorder,4,0.2202,0.012084031167348396,True
+risk_mean,substance_disorder,8,-0.3465,1.8452248925673643e-06,True
+risk_max,substance_disorder,8,-0.3574,6.970059418095578e-07,True
+warning_days,substance_disorder,11,-0.3873,5.0189331998663257e-08,True
+risk_mean,unemployment,11,-0.1415,0.4201526246153267,False
+risk_max,unemployment,11,-0.1212,0.872673604542589,False
+warning_days,unemployment,0,-0.1366,0.4472550932753801,False

@@ -101,6 +101,61 @@ llm:
   use_batch_api: true          # true: Batch API (50% 할인, 폴링 대기), false: 건건이 호출
   batch_poll_interval: 30      # Batch API 완료 폴링 간격 (초)
 
+# Module 9: Social Impact Analysis
+social:
+  start_year: 2006
+  end_year: 2026
+
+  # KOSIS Open API 지표 설정
+  # API 키는 .env의 KOSIS_API_KEY로 설정
+  # 수동 데이터: data/outputs/social/{indicator}_raw.csv (컬럼: year_month, value)
+  indicators:
+    suicide:
+      org_id: "101"              # 통계청
+      tbl_id: "DT_1B34E02"      # 사망원인(104항목)/성/월별 사망자수
+      item_id: "T1"              # 사망자수
+      obj_l1: "J06"              # 고의적 자해(자살) (X60-X84)
+      obj_l2: "0"                # 계 (남녀 합계)
+    mental_disorder:
+      org_id: "101"              # 통계청
+      tbl_id: "DT_1B34E02"      # 사망원인(104항목)/성/월별 사망자수
+      item_id: "T1"              # 사망자수
+      obj_l1: "5"                # 정신 및 행동장애 (F01-F99)
+      obj_l2: "0"                # 계 (남녀 합계)
+    substance_disorder:
+      org_id: "101"              # 통계청
+      tbl_id: "DT_1B34E02"      # 사망원인(104항목)/성/월별 사망자수
+      item_id: "T1"              # 사망자수
+      obj_l1: "501"              # 정신활성물질 사용에 의한 장애 (F10-F19)
+      obj_l2: "0"                # 계 (남녀 합계)
+    # crime:                     # 범죄 — KOSIS API에서 월별 미제공, 추후 추가
+    #   org_id: "135"
+    #   tbl_id: "TBD"
+    #   item_id: "ALL"
+    #   obj_l1: "ALL"
+    unemployment:
+      org_id: "101"              # 통계청
+      tbl_id: "DT_1DA7012S"     # 경제활동인구조사 — 성/연령별
+      item_id: "T80"             # 실업률
+      obj_l1: "0"                # 계
+      obj_l2: "00"               # 계 (전 연령)
+
+  # 리스크 스코어 집계
+  aggregation:
+    threshold: 18.52             # WARNING 기준 (Module 7 산출)
+
+  # 교차상관 분석
+  correlation:
+    max_lag_months: 12           # 최대 시차 (개월)
+    min_overlap_months: 24       # 최소 겹치는 기간
+    rolling_window_months: 12    # 롤링 상관 윈도우
+    significance_level: 0.05
+
+  # Granger 인과성 검정
+  granger:
+    max_lag: 6                   # 최대 시차
+    significance_level: 0.05
+
 # 경로
 paths:
   raw_data: "data/raw"
