@@ -660,6 +660,165 @@ if not plot_df.empty:
 st.divider()
 
 # ════════════════════════════════════════════════
+# 8. v3 예측 모델 결과
+# ════════════════════════════════════════════════
+st.subheader("8. 자살 사망 예측 (v3 모델)")
+st.caption("7변수 다변량 회귀: Property 분해 + 위기 피로감 + CPI + 가계대출 증가율")
+
+# v3 모델 빌드
+_props_df = _load_csv("monthly_properties.csv")
+_loan_df = _load_csv("household_loan_raw.csv")
+_cpi_df = _load_csv("cpi_raw.csv")
+
+if not _props_df.empty and not _loan_df.empty and not _cpi_df.empty and not merged_df.empty:
+    from sklearn.linear_model import LinearRegression
+
+    _loan_df.columns = ["year_month", "household_loan"]
+    _cpi_df.columns = _cpi_df.columns.tolist()[:1] + ["cpi"] if len(_cpi_df.columns) == 2 else _cpi_df.columns.tolist()
+    if "cpi" not in _cpi_df.columns:
+        _cpi_df = _cpi_df.rename(columns={_cpi_df.columns[1]: "cpi"})
+
+    _model_df = _props_df.merge(merged_df[["year_month", "suicide"]], on="year_month", how="left")
+    _model_df = _model_df.merge(_loan_df, on="year_month", how="left")
+    _model_df = _model_df.merge(_cpi_df[["year_month", "cpi"]], on="year_month", how="left")
+    _model_df["cpi_change"] = _model_df["cpi"].pct_change(fill_method=None) * 100
+    _model_df["loan_yoy"] = _model_df["household_loan"].pct_change(12, fill_method=None) * 100
+
+    _features = {
+        "consec_warning_months": 4,
+        "Property_055_contrib_mean": 7,
+        "Property_070_contrib_mean": 7,
+        "Property_113_contrib_mean": 7,
+        "Property_110_contrib_mean": 9,
+        "cpi_change": 6,
+        "loan_yoy": 9,
+    }
+
+    _lag_cols = []
+    for feat, lag in _features.items():
+        cn = f"{feat}_lag{lag}"
+        _model_df[cn] = _model_df[feat].shift(lag)
+        _lag_cols.append(cn)
+
+    _train = _model_df.dropna(subset=_lag_cols + ["suicide"])
+
+    if len(_train) > 20:
+        _reg = LinearRegression().fit(_train[_lag_cols], _train["suicide"])
+        _y_pred = _reg.predict(_train[_lag_cols])
+        _residual_std = (_train["suicide"] - _y_pred).std()
+        _r2 = 1 - np.sum((_train["suicide"] - _y_pred) ** 2) / np.sum((_train["suicide"] - _train["suicide"].mean()) ** 2)
+
+        # 전체 기간 예측 (train + future)
+        _all_pred = _model_df.dropna(subset=_lag_cols).copy()
+        _all_pred["predicted"] = _reg.predict(_all_pred[_lag_cols])
+        _all_pred["ci_lo"] = _all_pred["predicted"] - 1.96 * _residual_std
+        _all_pred["ci_hi"] = _all_pred["predicted"] + 1.96 * _residual_std
+
+        # 모델 성능 카드
+        _n_features = len(_features)
+        _adj_r2 = 1 - (1 - _r2) * (len(_train) - 1) / (len(_train) - _n_features - 1)
+        _mae = np.mean(np.abs(_train["suicide"] - _y_pred))
+
+        mc1, mc2, mc3, mc4 = st.columns(4)
+        mc1.metric("R²", f"{_r2:.3f}")
+        mc2.metric("adj. R²", f"{_adj_r2:.3f}")
+        mc3.metric("MAE", f"{_mae:.0f}명")
+        mc4.metric("변수 수", f"{_n_features}개")
+
+        # 예측 vs 실제 차트
+        fig_pred = go.Figure()
+
+        # 실제 자살 사망
+        _actual = _all_pred[_all_pred["suicide"].notna()]
+        fig_pred.add_trace(go.Scatter(
+            x=_actual["year_month"], y=_actual["suicide"],
+            name="실제", mode="lines",
+            line=dict(color="#1e88e5", width=2.5),
+        ))
+
+        # 예측값 (전체)
+        fig_pred.add_trace(go.Scatter(
+            x=_all_pred["year_month"], y=_all_pred["predicted"],
+            name="v3 예측", mode="lines",
+            line=dict(color="#e53935", width=2, dash="dot"),
+        ))
+
+        # 95% CI (미래 구간만 강조)
+        _future = _all_pred[_all_pred["suicide"].isna()]
+        if not _future.empty:
+            fig_pred.add_trace(go.Scatter(
+                x=pd.concat([_future["year_month"], _future["year_month"][::-1]]),
+                y=pd.concat([_future["ci_hi"], _future["ci_lo"][::-1]]),
+                fill="toself", fillcolor="rgba(229, 57, 53, 0.15)",
+                line=dict(color="rgba(0,0,0,0)"),
+                showlegend=True, name="95% 신뢰구간",
+                hoverinfo="skip",
+            ))
+
+        # 2024 평균선
+        _avg_2024 = _model_df[_model_df["year_month"].str.startswith("2024")]["suicide"].mean()
+        if not np.isnan(_avg_2024):
+            fig_pred.add_hline(
+                y=_avg_2024, line_dash="dash", line_color="gray", line_width=1,
+                annotation_text=f"2024 평균 ({_avg_2024:.0f}명)",
+                annotation_position="bottom right",
+            )
+
+        fig_pred.update_layout(
+            height=500,
+            yaxis_title="자살 사망자 수 (명/월)",
+            margin=dict(t=30, b=60),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
+            hovermode="x unified",
+        )
+        # 최근 3년만 표시
+        fig_pred.update_xaxes(range=["2023-01", "2026-12"])
+
+        st.plotly_chart(fig_pred, use_container_width=True)
+
+        # 예측 테이블
+        _future_display = _all_pred[_all_pred["year_month"] >= "2025-01"][
+            ["year_month", "predicted", "ci_lo", "ci_hi", "suicide"]
+        ].copy()
+        _future_display.columns = ["월", "예측", "하한", "상한", "실제"]
+        _future_display["예측"] = _future_display["예측"].apply(lambda x: f"{x:,.0f}명")
+        _future_display["하한"] = _future_display["하한"].apply(lambda x: f"{x:,.0f}명")
+        _future_display["상한"] = _future_display["상한"].apply(lambda x: f"{x:,.0f}명")
+        _future_display["실제"] = _future_display["실제"].apply(
+            lambda x: f"{x:,.0f}명" if pd.notna(x) else "미발표"
+        )
+
+        with st.expander("월별 예측 상세"):
+            st.dataframe(_future_display, hide_index=True, use_container_width=True)
+
+        # 변수 기여도
+        with st.expander("변수별 기여도 (β 계수)"):
+            _coef_data = []
+            for feat, coef in zip(_features.keys(), _reg.coef_):
+                _feat_labels = {
+                    "consec_warning_months": "연속 WARNING 월수",
+                    "Property_055_contrib_mean": "P_055 (경제불안)",
+                    "Property_070_contrib_mean": "P_070 (위기 전이)",
+                    "Property_113_contrib_mean": "P_113 (위기 확산)",
+                    "Property_110_contrib_mean": "P_110 (레버리지)",
+                    "cpi_change": "CPI 변화율",
+                    "loan_yoy": "가계대출 증가율 (YoY)",
+                }
+                _coef_data.append({
+                    "변수": _feat_labels.get(feat, feat),
+                    "시차": f"{_features[feat]}개월",
+                    "계수 (β)": f"{coef:+.1f}",
+                    "해석": f"1단위 증가 → {abs(coef):.0f}명 {'증가' if coef > 0 else '감소'}",
+                })
+            st.dataframe(pd.DataFrame(_coef_data), hide_index=True, use_container_width=True)
+    else:
+        st.info("모델 학습 데이터가 충분하지 않습니다.")
+else:
+    st.info("예측 모델 데이터가 없습니다. 필요 파일: monthly_properties.csv, household_loan_raw.csv, cpi_raw.csv")
+
+st.divider()
+
+# ════════════════════════════════════════════════
 # 해석 노트
 # ════════════════════════════════════════════════
 with st.expander("분석 해석 노트"):

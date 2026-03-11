@@ -1,0 +1,2 @@
+{"type": "pattern", "properties": ["score_acceleration", "circuit_breaker", "second_wave"], "observation": "Score 하루 3점 이상 상승 = 극심한 stress 가속화. 3/9-10: +3.6점 상승과 동시에 KOSPI 서킷브레이커 재발동. Score 50 돌파는 second wave 신호.", "confidence": 0.8, "basis": "evaluator auto-save", "timestamp": "2026-03-10T09:43:00.508960"}
+{"type": "threshold", "properties": ["score_acceleration"], "observation": "일일 score 변동 3점 이상 = 24-48시간 내 시장 충격 임계값. 3/9-10: +3.6점 → 당일 서킷브레이커", "confidence": 0.8, "basis": "evaluator auto-save", "timestamp": "2026-03-10T09:44:04.365353"}

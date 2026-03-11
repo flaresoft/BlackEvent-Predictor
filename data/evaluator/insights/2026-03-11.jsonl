@@ -1,0 +1,1 @@
+{"type": "threshold", "properties": ["score_acceleration", "extreme_event"], "observation": "일일 score 변동 13점 초과 = 시스템 극한 상태. 3/10→3/11: +13.4점은 관측 이래 최초. Score 74.6으로 2026년 최고치 경신.", "confidence": 0.95, "basis": "evaluator auto-save", "timestamp": "2026-03-11T09:29:07.681638"}

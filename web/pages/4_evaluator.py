@@ -102,8 +102,14 @@ def get_api_key():
     return key
 
 
-def build_system_prompt(context: dict, memory: str, insights: list, custom_role: str = None) -> str:
-    """평가자의 시스템 프롬프트를 구성한다."""
+def build_system_prompt(context: dict, memory: str, insights: list, custom_role: str = None) -> list:
+    """평가자의 시스템 프롬프트를 캐싱 가능한 블록 리스트로 구성한다.
+
+    Anthropic prompt caching: 동일 프리픽스 재전송 시 입력 토큰 비용 ~90% 절감.
+    - 블록 1: 역할 정의 (세션 내 불변)
+    - 블록 2: 데이터 + 메모리 + 인사이트 (세션 내 불변, cache_control 설정)
+    Tool-use 루프에서 동일 시스템 프롬프트가 반복 전송되므로 캐싱 효과가 크다.
+    """
     summary = context["summary"]
     rising = summary.get("rising_properties", [])
     falling = summary.get("falling_properties", [])
@@ -161,14 +167,12 @@ def build_system_prompt(context: dict, memory: str, insights: list, custom_role:
         )
     daily_str = "\n".join(daily_lines)
 
-    role_block = custom_role if custom_role else "(no role defined)"
+    role_text = custom_role if custom_role else "(no role defined)"
 
     dates = summary.get("dates_covered", ["?", "?"])
     date_range = f"{dates[0]} ~ {dates[-1]}" if dates else "no data"
 
-    return f"""{role_block}
-
-=== CURRENT DATA ({date_range}, {len(dates)} days) ===
+    data_text = f"""=== CURRENT DATA ({date_range}, {len(dates)} days) ===
 
 Daily overview:
 {daily_str or '  (none)'}
@@ -192,6 +196,15 @@ Cross patterns:
 
 === RECENT INSIGHTS ===
 {insights_str if insights_str else '(none yet)'}"""
+
+    return [
+        {"type": "text", "text": role_text},
+        {
+            "type": "text",
+            "text": data_text,
+            "cache_control": {"type": "ephemeral"},
+        },
+    ]
 
 
 @st.cache_resource
@@ -309,9 +322,11 @@ def _handle_tool_call(tool_name: str, tool_input: dict) -> str:
     return f"Unknown tool: {tool_name}"
 
 
-def call_claude(messages: list, system: str, api_key: str) -> tuple[str, list[str]]:
-    """Claude API를 호출한다 (tool use 지원).
+def call_claude(messages: list, system: list, api_key: str) -> tuple[str, list[str]]:
+    """Claude API를 호출한다 (tool use 지원, prompt caching 적용).
 
+    Args:
+        system: cache_control이 포함된 시스템 프롬프트 블록 리스트.
     Returns:
         (응답 텍스트, 도구 사용 로그 리스트)
     """
@@ -341,6 +356,20 @@ def call_claude(messages: list, system: str, api_key: str) -> tuple[str, list[st
     )
 
     response = _stream_collect(**call_kwargs)
+    total_input = 0
+    total_cache_read = 0
+    total_cache_create = 0
+    call_count = 0
+
+    def _accumulate_usage(resp):
+        nonlocal total_input, total_cache_read, total_cache_create, call_count
+        call_count += 1
+        u = resp.usage
+        total_input += getattr(u, "input_tokens", 0)
+        total_cache_read += getattr(u, "cache_read_input_tokens", 0)
+        total_cache_create += getattr(u, "cache_creation_input_tokens", 0)
+
+    _accumulate_usage(response)
 
     # tool use 루프: 커스텀 도구 호출이 있으면 처리 후 재호출
     while response.stop_reason == "tool_use":
@@ -373,6 +402,12 @@ def call_claude(messages: list, system: str, api_key: str) -> tuple[str, list[st
         ]
         call_kwargs["messages"] = messages
         response = _stream_collect(**call_kwargs)
+        _accumulate_usage(response)
+
+    # 캐시 사용량 로그
+    if total_cache_read > 0 or total_cache_create > 0:
+        saved_pct = (total_cache_read / (total_input + total_cache_read + total_cache_create) * 100) if (total_input + total_cache_read + total_cache_create) > 0 else 0
+        tool_logs.insert(0, f"Cache: {total_cache_read:,} read / {total_cache_create:,} created ({saved_pct:.0f}% cached, {call_count} calls)")
 
     # 텍스트 응답 추출
     text_parts = [block.text for block in response.content if hasattr(block, "text")]
